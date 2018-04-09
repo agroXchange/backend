@@ -1,0 +1,26 @@
+{
+  "name": "typequiz-backend",
+  "version": "1.0.0",
+  "main": "target/index.js",
+  "author": "nsch1 <nick.schooneman1@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/koa": "^2.0.44",
+    "@types/koa-bodyparser": "^4.2.0",
+    "@types/koa-multer": "^1.0.0",
+    "@types/koa-router": "^7.0.27",
+    "jsonwebtoken": "^8.2.1",
+    "kcors": "^2.2.1",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "pg": "^7.4.1",
+    "routing-controllers": "^0.7.7",
+    "typeorm": "^0.1.16"
+  },
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon --inspect ."
+  }
+}
