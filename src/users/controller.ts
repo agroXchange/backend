@@ -1,4 +1,4 @@
-import {Body, JsonController, Post} from "routing-controllers";
+import {Authorized, Body, CurrentUser, Get, JsonController, Param, Post} from "routing-controllers";
 import {Profile} from "../profiles/entity";
 import {IsEmail, IsString, MinLength} from "class-validator";
 import {User} from "./entity";
@@ -16,6 +16,25 @@ class ValidateSignupPayload extends Profile {
 
 @JsonController()
 export default class UserController {
+
+  @Authorized()
+  @Get('/users/:id([0-9]+)')
+  getUser(
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
+  ) {
+    if(currentUser.id === id) {
+      return User.find({
+        where: {id},
+        relations: ['products', 'orders']
+      })
+    }
+
+    return User.find({
+      where: {id},
+      relations: ['products']
+    })
+  }
 
   @Post('/users')
   async createUser(
