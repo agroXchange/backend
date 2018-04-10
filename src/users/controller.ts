@@ -26,13 +26,13 @@ export default class UserController {
     if(currentUser.id === id) {
       return User.find({
         where: {id},
-        relations: ['products', 'orders']
+        relations: ['products', 'orders', 'profile']
       })
     }
 
     return User.find({
       where: {id},
-      relations: ['products']
+      relations: ['products', 'profile']
     })
   }
 
@@ -53,7 +53,7 @@ export default class UserController {
     const {email, password, ...profile} = body
 
     const profileEntity = await Profile.create(profile).save()
-    const userEntity = User.create({email})
+    const userEntity = User.create({email, approved: true})
 
     await userEntity.setPassword(password)
     userEntity.profile = profileEntity
