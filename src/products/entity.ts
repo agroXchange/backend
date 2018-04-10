@@ -41,13 +41,19 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: false })
   city: string;
 
-  @IsString()
-  @Column('text', { nullable: true })
-  expiration_date: string;
+  @Column('date', { default: new Date() })
+  expiration_date = Date
 
   @IsString()
   @Column('text', { nullable: false })
   currency: string;
+
+  @Column('date', { default: new Date() })
+  harvested: Date
+
+  @IsString()
+  @Column('text', { nullable: true })
+  certificate: string;
 
   @ManyToOne(_ => Profile, profile => profile.products)
   profile: Profile;
