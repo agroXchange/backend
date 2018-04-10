@@ -1,9 +1,11 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany} from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsEmail, MinLength } from 'class-validator'
 import {Exclude} from 'class-transformer'
 import { Profile } from '../profiles/entity'
 import * as bcrypt from 'bcrypt'
+import {Order} from "../orders/entity";
+import {Product} from "../products/entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -27,6 +29,12 @@ export class User extends BaseEntity {
   @OneToOne(_ => Profile)
   @JoinColumn()
   profile: Profile;
+
+  @OneToMany(_ => Product, product => product.profile)
+  products: Product[]
+
+  @OneToMany(_ => Order, order => order.profile)
+  orders: Order[]
 
   async setPassword(pass: string) {
     this.password = await bcrypt.hash(pass, 10)

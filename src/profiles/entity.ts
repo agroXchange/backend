@@ -46,10 +46,4 @@ export class Profile extends BaseEntity {
   @Column('text', { default: false })
   approved: boolean;
 
-  @OneToMany(_ => Product, product => product.profile)
-  products: Product[]
-
-  @OneToMany(_ => Order, order => order.profile)
-  orders: Order[]
-
  }
