@@ -21,6 +21,10 @@
   },
   "scripts": {
     "start": "node .",
-    "dev": "nodemon --inspect ."
+    "dev": "nodemon --inspect .",
+    "compile": "./node_modules/typescript/bin/tsc -p ."
+  },
+  "devDependencies": {
+    "typescript": "^2.8.1"
   }
 }
