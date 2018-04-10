@@ -55,7 +55,7 @@ export class Product extends BaseEntity {
   @OneToMany(_ => Order, order => order.product, {eager: true})
   orders: Order[]
 
-  @OneToOne(_ => Code, code => code.product,{eager: true})
+  @OneToOne(_ => Code, code => code.product)
   code: Code;
 
 

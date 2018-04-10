@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   @Column('text', { nullable: false })
   role: string;
 
-  @OneToOne(_ => Profile, profile => profile.user,{eager: true})
+  @OneToOne(_ => Profile, profile => profile.user)
   profile: Profile;
 
 
