@@ -35,7 +35,7 @@ export class Profile extends BaseEntity {
 
   @IsString()
   @Column('text', { nullable: true })
-  chambers_of_commerce: string;
+  chambersOfCommerce: string;
 
   @IsString()
   @Column('text', { nullable: false })
