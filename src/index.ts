@@ -4,7 +4,9 @@ import setupDb from './db'
 import {verify} from "./jwt";
 import {User} from "./users/entity";
 import LoginController from "./logins/controller";
+import  OrderController  from './orders/controller'
 import UserController from "./users/controller";
+
 
 const port = process.env.PORT || 4008
 
@@ -12,6 +14,7 @@ const app = createKoaServer({
   cors: true,
   controllers: [
     LoginController,
+    OrderController,
     UserController
   ],
   currentUserChecker: async (action: Action) => {
