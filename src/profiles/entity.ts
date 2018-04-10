@@ -23,7 +23,7 @@ export class Profile extends BaseEntity {
 
   @IsString()
   @Column('text', { nullable: false })
-  telephone: string;
+  phone: string;
 
   @IsString()
   @Column('text', { nullable: false })
@@ -33,29 +33,14 @@ export class Profile extends BaseEntity {
   @Column('text', { nullable: false })
   field: string;
 
-  @IsString()
   @Column('text', { nullable: true })
-  chambersOfCommerce: string;
+  chamberOfCommerce: string;
 
   @IsString()
   @Column('text', { nullable: false })
   city: string;
 
-  @IsString()
   @Column('text', { nullable: true })
   link: string;
-
-  @IsBoolean()
-  @Column('text', { nullable: false })
-  approved: boolean;
-
-  @OneToOne(_ => User, user => user.profile,{eager: true})
-  user: User;
-
-  @OneToMany(_ => Product, product => product.profile, {eager: true})
-  products: Product[]
-
-  @OneToMany(_ => Order, order => order.profile, {eager: true})
-  orders: Order[]
 
  }
