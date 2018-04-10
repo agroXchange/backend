@@ -4,10 +4,6 @@ import { IsString, IsNumber} from 'class-validator'
 import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
 
-
-
-
-
 @Entity()
 export class Order extends BaseEntity {
 
@@ -26,11 +22,13 @@ export class Order extends BaseEntity {
   @Column('text', { nullable: false })
   status: string;
 
+  @Column('date', { default: new Date() })
+  createdAt: Date
+
   @ManyToOne(_ => Product, product => product.orders)
   product: Product;
 
   @ManyToOne(_ => Profile, profile => profile.orders)
   profile: Profile;
-
 
  }
