@@ -43,7 +43,4 @@ export class Profile extends BaseEntity {
   @Column('text', { nullable: true })
   link: string;
 
-  @Column('text', { default: false })
-  approved: boolean;
-
  }

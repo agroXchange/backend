@@ -1,4 +1,4 @@
-import {Authorized, Body, CurrentUser, Get, JsonController, Param, Post} from "routing-controllers";
+import {Authorized, BadRequestError, Body, CurrentUser, Get, JsonController, Param, Post} from "routing-controllers";
 import {Profile} from "../profiles/entity";
 import {IsEmail, IsString, MinLength} from "class-validator";
 import {User} from "./entity";
@@ -34,6 +34,16 @@ export default class UserController {
       where: {id},
       relations: ['products']
     })
+  }
+
+  @Authorized()
+  @Get('/users')
+  getAllUsers(
+    @CurrentUser() currentUser: User
+  ) {
+    if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
+
+    return User.find()
   }
 
   @Post('/users')
