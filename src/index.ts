@@ -2,13 +2,15 @@ import 'reflect-metadata'
 import {Action, BadRequestError, createKoaServer} from "routing-controllers"
 import setupDb from './db'
 import {verify} from "./jwt";
+import {User} from "./users/entity";
+import LoginController from "./logins/controller";
 
 const port = process.env.PORT || 4008
 
 const app = createKoaServer({
   cors: true,
   controllers: [
-    //..
+    LoginController
   ],
   currentUserChecker: async (action: Action) => {
     const header: string = action.request.headers.authorization
@@ -17,7 +19,7 @@ const app = createKoaServer({
 
       if (token) {
         const {id} = verify(token)
-        //return User.findOne({where: {id}})
+        return User.findOne({where: {id}})
       }
     }
     return undefined
