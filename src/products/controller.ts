@@ -10,7 +10,8 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam
+  HeaderParam,
+  UploadedFile
 } from 'routing-controllers'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
@@ -45,9 +46,9 @@ export default class ProductController {
     @Body() product: Product
   ) {
     const user = await User.findOneById(sellerId)
-    const code = await Code.findOneById(product.code)
 
     if(!user) throw new BadRequestError("User doesn't exist.")
+
     await Product.create({
     name: product.name,
     photo: product.photo,
@@ -58,8 +59,7 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    user: user,
-    code: code
+    user: user
 
     }).save()
     return "Succesfully added new product";

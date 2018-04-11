@@ -47,13 +47,17 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: true })
   certificate: string;
 
+  @IsString()
+  @Column('text', { nullable: true })
+  code: string;
+
   @ManyToOne(_ => User, user => user.products)
   user: User;
 
   @OneToMany(() => Order, order => order.product)
   orders: Order[];
 
-  @ManyToOne(_ => Code, code => code.product)
-  code: Code;
+  //@ManyToOne(_ => Code, code => code.product)
+  //code: Code;
 
  }
