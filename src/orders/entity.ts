@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, RelationId } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber} from 'class-validator'
 import { Product } from '../products/entity'
@@ -37,5 +37,7 @@ export class Order extends BaseEntity {
   @ManyToOne(_ => User, user => user.orders)
   user: User;
 
+  @RelationId((order: Order) => order.user)
+  userId: number
 
  }

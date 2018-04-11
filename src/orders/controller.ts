@@ -10,9 +10,12 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam
+  HeaderParam,
+  CurrentUser
+
 } from 'routing-controllers'
 import { Order } from './entity'
+import { User } from '../users/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
 import * as request from 'superagent'
@@ -26,6 +29,16 @@ export default class orderController {
   getOrders() {
     return Order.find({
     })
+  }
+
+  @Get('/orders/:id([0-9]+)/user')
+  async getUser(
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
+  ) {
+      const user = await User.findOneById(id)
+
+      return Order.find({where: {user}})
   }
 
   @Get('/orders/:id([0-9]+)')
