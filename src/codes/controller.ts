@@ -7,17 +7,19 @@ import {
     Get,
     Body,
     HttpCode,
+    QueryParam,
+    QueryParams
 
 } from 'routing-controllers'
 
 
 
-import { EntityFromQuery } from "typeorm-routing-controllers-extensions";
+// import { EntityFromQuery } from "typeorm-routing-controllers-extensions";
 
 
 import { Code } from '../codes/entity'
 import { Validate } from 'class-validator'
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 
 
 
@@ -40,22 +42,23 @@ export default class CodeController {
 
     }
 
+//lookup a code
+    @Get("/test")
+    //@HttpCode(200)
+    async getCodebyCode(
+        //@Param('code') code: string
+        @QueryParam("code") code: string
+    )  {
+        console.log(code)
+        const entities = await getRepository(Code)
+                .createQueryBuilder("entity") // Row Alias
+                .where("entity.code like :code", { code})
+                .getMany()
 
+        console.log(code)
 
-
-    @Get("/codes")
-    @HttpCode(200)
-    get(@EntityFromQuery("code") code: Code) {
-        return code;
+        return entities
     }
-
-
-
-
-    // const code = await getConnection()
-    //     .createQueryBuilder()
-    //     .select()
-    //     .from(Code, "user")
-    //     .where("code.code = :id", { id: 1 })
-    //     .getOne();
+    
 }
+
