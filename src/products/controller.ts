@@ -19,6 +19,7 @@ import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
 import { User } from '../users/entity'
 import * as request from 'superagent'
+import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 
 
 @JsonController()
@@ -43,7 +44,8 @@ export default class ProductController {
   @HttpCode(200)
   async addProduct(
     @Param('id') sellerId: number,
-    @Body() product: Product
+    @Body() product: Product,
+    @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
     const user = await User.findOneById(sellerId)
 
@@ -51,7 +53,7 @@ export default class ProductController {
 
     await Product.create({
     name: product.name,
-    photo: product.photo,
+    photo: `http://localhost:4008/${file.path}`,
     volume: product.volume,
     price: product.price,
     description: product.description,

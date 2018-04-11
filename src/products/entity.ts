@@ -17,7 +17,7 @@ export class Product extends BaseEntity {
   @Column('text',{ nullable: false })
   name: string;
 
-  @IsString()
+
   @Column('text', { nullable: true })
   photo: string
 
