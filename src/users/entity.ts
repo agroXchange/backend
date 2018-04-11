@@ -33,10 +33,10 @@ export class User extends BaseEntity {
   @JoinColumn()
   profile: Profile;
 
-  @OneToMany(_ => Product, product => product.profile)
+  @OneToMany(_ => Product, product => product.user)
   products: Product[]
 
-  @OneToMany(_ => Order, order => order.profile)
+  @OneToMany(_ => Order, order => order.user)
   orders: Order[]
 
   async setPassword(pass: string) {

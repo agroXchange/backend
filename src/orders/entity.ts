@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber} from 'class-validator'
-import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
+import {User} from "../users/entity";
 
 
 @Entity()
@@ -34,8 +34,8 @@ export class Order extends BaseEntity {
   @ManyToOne(_ => Product, product => product.orders)
   product: Product;
 
-  @ManyToOne(_ => Profile, profile => profile.orders)
-  profile: Profile;
+  @ManyToOne(_ => User, user => user.orders)
+  user: User;
 
 
  }
