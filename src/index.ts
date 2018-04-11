@@ -6,7 +6,9 @@ import {User} from "./users/entity";
 import LoginController from "./logins/controller";
 import  OrderController  from './orders/controller'
 import UserController from "./users/controller";
+import CodeController from "./codes/controller";
 import ProductController from "./products/controller";
+import * as serve from 'koa-static'
 
 
 const port = process.env.PORT || 4008
@@ -17,6 +19,7 @@ const app = createKoaServer({
     LoginController,
     OrderController,
     UserController,
+    CodeController,
     ProductController
   ],
   currentUserChecker: async (action: Action) => {
@@ -47,6 +50,8 @@ const app = createKoaServer({
     return false
   }
 })
+
+app.use(serve('./public'))
 
 setupDb()
   .then(_ => {
