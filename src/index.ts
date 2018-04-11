@@ -6,6 +6,7 @@ import {User} from "./users/entity";
 import LoginController from "./logins/controller";
 import  OrderController  from './orders/controller'
 import UserController from "./users/controller";
+import ProductController from "./products/controller";
 
 
 const port = process.env.PORT || 4008
@@ -15,7 +16,8 @@ const app = createKoaServer({
   controllers: [
     LoginController,
     OrderController,
-    UserController
+    UserController,
+    ProductController
   ],
   currentUserChecker: async (action: Action) => {
     const header: string = action.request.headers.authorization

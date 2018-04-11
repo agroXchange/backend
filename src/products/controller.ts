@@ -15,11 +15,12 @@ import {
 import { Order } from './entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
+import { User } from '../users/entity'
 import * as request from 'superagent'
 
 
 @JsonController()
-export default class orderController {
+export default class ProductController {
 
   @Get('/products')
   @HttpCode(200)
@@ -40,17 +41,23 @@ export default class orderController {
   @HttpCode(200)
   async addProduct(
     @Param('id') sellerId: number,
-    @Body() order: Product
+    @Body() product: Product
   ) {
-    const group: any = await Seller.findOneById(sellerId)
+    const user = await User.findOneById(sellerId)
+
+    if(!user) throw new BadRequestError("User doesn't exist.")
     await Product.create({
     name: product.name,
     photo: product.photo,
     volume: product.volume,
     price: product.price,
-    destination: .ICO,
+    description: product.description,
+    expiration: product.expiration,
+    currency: product.currency,
+    harvested: product.harvested,
+    certificate: product.sertificate,
 
     }).save()
-    return "Succesfully added new product"
+    return "Succesfully added new product";
 
   }
