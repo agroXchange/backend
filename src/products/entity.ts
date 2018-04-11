@@ -30,7 +30,7 @@ export class Product extends BaseEntity {
   price: number;
 
   @IsString()
-  @Column('text', { nullable: false })
+  @Column('text', { nullable: true })
   description: string;
 
   @Column('date', { name: 'edate' })

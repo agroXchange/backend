@@ -53,7 +53,7 @@ export default class ProductController {
 
     await Product.create({
     name: product.name,
-    photo: `http://localhost:4008/${file.path}`,
+    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
     volume: product.volume,
     price: product.price,
     description: product.description,
