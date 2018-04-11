@@ -1,8 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
-import { IsString, IsNumber } from 'class-validator'
+import { IsString } from 'class-validator'
 import { Product } from '../products/entity'
-
 
 @Entity()
 export class Code extends BaseEntity {
@@ -24,6 +23,5 @@ export class Code extends BaseEntity {
 
   @OneToMany(_ => Product, product => product.code)
   product: Product[];
-
 
 }

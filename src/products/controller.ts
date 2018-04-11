@@ -16,19 +16,19 @@ import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
-import { User } from '../users/entity'
-import * as request from 'superagent'
-
+import { Profile } from '../profiles/entity'
 
 @JsonController()
 export default class ProductController {
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/products')
   @HttpCode(200)
   getProducts() {
     return Product.find()
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
   getOrderbyID(
@@ -38,16 +38,17 @@ export default class ProductController {
     return product
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Post('/:id([0-9]+)/products')
   @HttpCode(200)
   async addProduct(
     @Param('id') sellerId: number,
     @Body() product: Product
   ) {
-    const user = await User.findOneById(sellerId)
+    const profile = await Profile.findOneById(sellerId)
     const code = await Code.findOneById(product.code)
 
-    if(!user) throw new BadRequestError("User doesn't exist.")
+    if(!profile) throw new BadRequestError("Profile doesn't exist.")
     await Product.create({
     name: product.name,
     photo: product.photo,
@@ -58,9 +59,8 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    user: user,
+    seller: profile,
     code: code
-
     }).save()
     return "Succesfully added new product";
 

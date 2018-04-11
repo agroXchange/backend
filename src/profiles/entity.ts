@@ -1,11 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
-import { IsString, IsBoolean } from 'class-validator'
-import { User } from '../users/entity'
-import { Product } from '../products/entity'
-import { Order } from '../orders/entity'
-
-
+import { IsString, IsEmail } from 'class-validator'
+import {Order} from "../orders/entity"
+import {Product} from "../products/entity"
 
 @Entity()
 export class Profile extends BaseEntity {
@@ -38,9 +35,27 @@ export class Profile extends BaseEntity {
 
   @IsString()
   @Column('text', { nullable: false })
+  country: string;
+
+  @IsString()
+  @Column('text', { nullable: false })
   city: string;
+
+  @IsString()
+  @Column('text', { nullable: true })
+  logo: string;
+
+  @IsEmail()
+  @Column('text', { nullable: true })
+  email: string;
 
   @Column('text', { nullable: true })
   link: string;
+
+  @OneToMany(_ => Product, product => product.seller)
+  products: Product[]
+
+  @OneToMany(_ => Order, order => order.buyer)
+  orders: Order[]
 
  }

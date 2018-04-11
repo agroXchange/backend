@@ -17,20 +17,20 @@ import {
 import { Order } from './entity'
 import { User } from '../users/entity'
 import { Product } from '../products/entity'
-import { Validate } from 'class-validator'
-import * as request from 'superagent'
-
 
 @JsonController()
 export default class orderController {
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/orders')
   @HttpCode(200)
   getOrders() {
     return Order.find({
+      relations: ['buyer']
     })
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)/user')
   async getUser(
     @Param('id') id: number,
@@ -41,6 +41,7 @@ export default class orderController {
       return Order.find({where: {user}})
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
   getOrderbyID(
@@ -50,6 +51,7 @@ export default class orderController {
     return group
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Post('/products/:id([0-9]+)/orders')
   @HttpCode(200)
   async addOrder(
@@ -69,6 +71,7 @@ export default class orderController {
 
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Patch('/orders/:id([0-9]+)')
   @HttpCode(200)
   async changeOrder(
@@ -76,7 +79,7 @@ export default class orderController {
     @Body() order: Partial<Order>
   ) {
       const or =await Order.findOneById(orderId)
-      await Order.merge(or, order).save()
+      await Order.merge(or!, order).save()
       return "Succesfully changed new order"
 
   }
