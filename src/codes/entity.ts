@@ -1,10 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber } from 'class-validator'
 import { Product } from '../products/entity'
-
-
-
 
 
 @Entity()
@@ -13,20 +10,20 @@ export class Code extends BaseEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @IsNumber()
-  @Column('int', { nullable: false })
-  code: number;
+  @IsString()
+  @Column('varchar', { length: 10 })
+  code: string;
 
   @IsString()
   @Column('text', { nullable: false })
-  title: string
+  titleeng: string
 
   @IsString()
-  @Column('text', { nullable: false })
-  short_title: string;
+  @Column('text', { nullable: true })
+  titleesp: string;
 
-  @OneToOne(_ => Product, product => product.code,{eager: true})
+  @OneToMany(_ => Product, product => product.code)
   product: Product;
 
 
- }
+}
