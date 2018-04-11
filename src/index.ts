@@ -6,6 +6,7 @@ import {User} from "./users/entity";
 import LoginController from "./logins/controller";
 import  OrderController  from './orders/controller'
 import UserController from "./users/controller";
+import CodeController from "./codes/controller";
 import * as serve from 'koa-static'
 
 
@@ -16,7 +17,8 @@ const app = createKoaServer({
   controllers: [
     LoginController,
     OrderController,
-    UserController
+    UserController,
+    CodeController
   ],
   currentUserChecker: async (action: Action) => {
     const header: string = action.request.headers.authorization
