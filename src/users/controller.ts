@@ -17,22 +17,22 @@ class ValidateSignupPayload extends Profile {
 @JsonController()
 export default class UserController {
 
-  @Authorized()
+  //@Authorized()
   @Get('/users/:id([0-9]+)')
   getUser(
     @Param('id') id: number,
     @CurrentUser() currentUser: User
   ) {
-    if(currentUser.id === id) {
-      return User.find({
-        where: {id},
-        relations: ['products', 'orders', 'profile']
-      })
-    }
+    // if(currentUser.id === id) {
+    //   return User.find({
+    //     where: {id},
+    //     relations: ['products', 'orders', 'profile']
+    //   })
+    // }
 
     return User.find({
       where: {id},
-      relations: ['products', 'profile']
+      relations: ['products', 'profile', 'orders']
     })
   }
 

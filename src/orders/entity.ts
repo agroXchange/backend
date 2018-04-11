@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, RelationId } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber} from 'class-validator'
 import { Product } from '../products/entity'
@@ -31,11 +31,13 @@ export class Order extends BaseEntity {
   @Column('text', { nullable: true })
   ICO: string;
 
-  @ManyToOne(_ => Product, product => product.orders)
+  @ManyToOne(_ => Product, product => product.orders, {eager: true})
   product: Product;
 
   @ManyToOne(_ => User, user => user.orders)
   user: User;
 
+  @RelationId((order: Order) => order.user)
+  userId: number
 
  }
