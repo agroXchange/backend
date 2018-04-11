@@ -20,4 +20,14 @@
 |-------------|-----------|-----------|
 | /users/:id  | GET       | 1 user *  |
 
+### Order routes
+
+|**URI**|**VERB**|**ACTION**|
+|--------------------|-----------|-----------|
+| /orders            | GET       | All orders|
+| /orders/:id        | GET       | 1 order   |
+|/products/:id/orders| POST      | create    |
+|/orders/:id         | PATCH     | patch     |
+
+
 _* If the logged in user is the same as the user you're getting it also gets the orders for that user_
