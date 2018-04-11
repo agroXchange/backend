@@ -4,9 +4,6 @@ import { IsString, IsNumber } from 'class-validator'
 import { Product } from '../products/entity'
 
 
-
-
-
 @Entity()
 export class Code extends BaseEntity {
 

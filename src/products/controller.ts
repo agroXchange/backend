@@ -55,7 +55,7 @@ export default class ProductController {
     expiration: product.expiration,
     currency: product.currency,
     harvested: product.harvested,
-    certificate: product.sertificate,
+    certificate: product.certificate,
 
     }).save()
     return "Succesfully added new product";
