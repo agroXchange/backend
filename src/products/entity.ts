@@ -31,10 +31,6 @@ export class Product extends BaseEntity {
 
   @IsString()
   @Column('text', { nullable: false })
-  destination: string;
-
-  @IsString()
-  @Column('text', { nullable: false })
   description: string;
 
   @IsString()

@@ -24,7 +24,8 @@ export default class orderController {
   @Get('/orders')
   @HttpCode(200)
   getOrders() {
-    return Order.find()
+    return Order.find({
+    })
   }
 
   @Get('/orders/:id([0-9]+)')
