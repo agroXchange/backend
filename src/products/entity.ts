@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToOne } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
-import { IsString, IsNumber } from 'class-validator'
+import { IsString, IsInt, IsNumber } from 'class-validator'
+import { Profile } from '../profiles/entity'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
-import {User} from "../users/entity";
-
+import { User } from '../users/entity'
 
 
 @Entity()
@@ -21,11 +21,11 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: true })
   photo: string
 
-  @IsString()
-  @Column('text', { nullable: false })
-  volume: string;
+  @IsInt()
+  @Column('int', { nullable: false })
+  volume: number;
 
-  @IsNumber()
+  @IsInt()
   @Column('int', { nullable: false })
   price: number;
 
@@ -33,19 +33,15 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: false })
   description: string;
 
-  @IsString()
-  @Column('text', { nullable: false })
-  city: string;
-
-  @Column('date', { default: new Date() })
-  expiration_date = Date
+  @Column('date', { name: 'edate' })
+  expiration: Date;
 
   @IsString()
   @Column('text', { nullable: false })
   currency: string;
 
-  @Column('date', { default: new Date() })
-  harvested: Date
+  @Column('date', { name: 'hdate' })
+  harvested: Date;
 
   @IsString()
   @Column('text', { nullable: true })
@@ -54,11 +50,10 @@ export class Product extends BaseEntity {
   @ManyToOne(_ => User, user => user.products)
   user: User;
 
-  @OneToMany(_ => Order, order => order.product)
-  orders: Order[]
+  @OneToMany(() => Order, order => order.product)
+  orders: Order[];
 
-  @OneToOne(_ => Code, code => code.product)
+  @ManyToOne(_ => Code, code => code.product)
   code: Code;
-
 
  }
