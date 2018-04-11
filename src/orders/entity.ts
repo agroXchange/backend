@@ -31,7 +31,7 @@ export class Order extends BaseEntity {
   @Column('text', { nullable: true })
   ICO: string;
 
-  @ManyToOne(_ => Product, product => product.orders)
+  @ManyToOne(_ => Product, product => product.orders, {eager: true})
   product: Product;
 
   @ManyToOne(_ => User, user => user.orders)
