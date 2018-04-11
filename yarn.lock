@@ -1503,6 +1503,10 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
+typeorm-routing-controllers-extensions@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/typeorm-routing-controllers-extensions/-/typeorm-routing-controllers-extensions-0.1.0.tgz#c5b8a1d6bcc3d2c7eed97b9acccde9539980862a"
+
 typeorm@^0.1.16:
   version "0.1.16"
   resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.1.16.tgz#52a9251f4394c07ce1f4e14d2c8b6cfca89535fc"
