@@ -23,7 +23,7 @@ export class Code extends BaseEntity {
   titleesp: string;
 
   @OneToMany(_ => Product, product => product.code)
-  product: Product;
+  product: Product[];
 
 
 }
