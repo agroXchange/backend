@@ -21,38 +21,36 @@ import * as request from 'superagent'
 @JsonController()
 export default class orderController {
 
-  @Get('/orders')
+  @Get('/products')
   @HttpCode(200)
-  getOrders() {
-    return Order.find()
+  getProducts() {
+    return Product.find()
   }
 
-  @Get('/orders/:id([0-9]+)')
+  @Get('/products/:id([0-9]+)')
   @HttpCode(200)
   getOrderbyID(
     @Param('id') id: number
   ) {
-    const group = Order.findOneById(id)
-    return group
+    const product = Product.findOneById(id)
+    return product
   }
 
-  @Post('/products/:id([0-9]+)/orders')
+  @Post('/:id([0-9]+)/products')
   @HttpCode(200)
-  async addOrder(
-    @Param('id') productId: number,
-    @Body() order: Order
+  async addProduct(
+    @Param('id') sellerId: number,
+    @Body() order: Product
   ) {
-    const group: any = await Product.findOneById(productId)
-    await Order.create({
-    volume: order.volume,
-    comments: order.comments,
-    status: order.status,
-    date: order.date,
-    ICO: order.ICO,
+    const group: any = await Seller.findOneById(sellerId)
+    await Product.create({
+    name: product.name,
+    photo: product.photo,
+    volume: product.volume,
+    price: product.price,
+    destination: .ICO,
 
     }).save()
-    return "Succesfully added new order"
+    return "Succesfully added new product"
 
   }
-
-  

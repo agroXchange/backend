@@ -1,10 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToOne } from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber } from 'class-validator'
+import { Profile } from '../profiles/entity'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
-import {User} from "../users/entity";
-
 
 
 @Entity()
@@ -55,14 +54,13 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: true })
   certificate: string;
 
-  @ManyToOne(_ => User, user => user.products)
-  user: User;
+  @ManyToOne(_ => Profile, profile => profile.products)
+  profile: Profile;
 
   @OneToMany(_ => Order, order => order.product, {eager: true})
-  orders: Order[]
+  orders: Order[];
 
   @OneToOne(_ => Code, code => code.product)
   code: Code;
-
 
  }
