@@ -12,7 +12,8 @@ import {
   Post,
   HeaderParam
 } from 'routing-controllers'
-import { Order } from './entity'
+import { Order } from '../orders/entity'
+import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
 import { User } from '../users/entity'
@@ -44,6 +45,7 @@ export default class ProductController {
     @Body() product: Product
   ) {
     const user = await User.findOneById(sellerId)
+    const code = await Code.findOneById(product.code)
 
     if(!user) throw new BadRequestError("User doesn't exist.")
     await Product.create({
@@ -56,8 +58,11 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
+    user: user,
+    code: code
 
     }).save()
     return "Succesfully added new product";
 
   }
+}
