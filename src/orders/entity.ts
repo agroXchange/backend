@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, RelationId } from 't
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber} from 'class-validator'
 import { Product } from '../products/entity'
-import {User} from "../users/entity";
+import {Profile} from "../profiles/entity";
 
 
 @Entity()
@@ -34,10 +34,7 @@ export class Order extends BaseEntity {
   @ManyToOne(_ => Product, product => product.orders, {eager: true})
   product: Product;
 
-  @ManyToOne(_ => User, user => user.orders)
-  user: User;
-
-  @RelationId((order: Order) => order.user)
-  userId: number
+  @ManyToOne(_ => Profile, buyer => buyer.orders)
+  buyer: Profile;
 
  }

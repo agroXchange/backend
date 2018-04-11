@@ -17,20 +17,21 @@ import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
-import { User } from '../users/entity'
-import * as request from 'superagent'
+import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 
 
 @JsonController()
 export default class ProductController {
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/products')
   @HttpCode(200)
   getProducts() {
     return Product.find()
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
   getOrderbyID(
@@ -40,6 +41,7 @@ export default class ProductController {
     return product
   }
 
+  //@Authorized() //TODO: activate once testing is over
   @Post('/:id([0-9]+)/products')
   @HttpCode(200)
   async addProduct(
@@ -47,9 +49,11 @@ export default class ProductController {
     @Body() product: Product,
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
-    const user = await User.findOneById(sellerId)
 
-    if(!user) throw new BadRequestError("User doesn't exist.")
+    const profile = await Profile.findOneById(sellerId)
+    const code = await Code.findOneById(product.code)
+
+    if(!profile) throw new BadRequestError("Profile doesn't exist.")
 
     await Product.create({
     name: product.name,
@@ -61,7 +65,7 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    user: user
+    seller: profile,
 
     }).save()
     return "Succesfully added new product";

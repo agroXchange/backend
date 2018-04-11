@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany} from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany, Column} from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsEmail, MinLength } from 'class-validator'
 import {Exclude} from 'class-transformer'
@@ -29,14 +29,14 @@ export class User extends BaseEntity {
   @Column('boolean', { default: false })
   approved: boolean;
 
-  @OneToOne(_ => Profile)
+  @OneToOne(_ => Profile, {eager: true})
   @JoinColumn()
   profile: Profile;
 
-  @OneToMany(_ => Product, product => product.user)
+  @OneToMany(_ => Product, product => product.seller)
   products: Product[]
 
-  @OneToMany(_ => Order, order => order.user)
+  @OneToMany(_ => Order, order => order.buyer)
   orders: Order[]
 
   async setPassword(pass: string) {

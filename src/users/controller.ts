@@ -32,7 +32,7 @@ export default class UserController {
 
     return User.find({
       where: {id},
-      relations: ['products', 'profile']
+      relations: ['products', 'orders']
     })
   }
 
