@@ -16,13 +16,14 @@ import {
 } from 'routing-controllers'
 import { Order } from './entity'
 import { User } from '../users/entity'
+import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
 
 @JsonController()
 export default class orderController {
 
   //@Authorized() //TODO: activate once testing is over
-  @Get('/orders')
+  @Get('/orders/all')
   @HttpCode(200)
   getOrders() {
     return Order.find({
@@ -30,15 +31,13 @@ export default class orderController {
     })
   }
 
-  //@Authorized() //TODO: activate once testing is over
-  @Get('/orders/:id([0-9]+)/user')
+  @Authorized()
+  @Get('/orders')
   async getUser(
-    @Param('id') id: number,
     @CurrentUser() currentUser: User
   ) {
-      const user = await User.findOneById(id)
-
-      return Order.find({where: {user}})
+    const buyer = currentUser.profile
+    return Order.find({where: {buyer}})
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -81,7 +80,6 @@ export default class orderController {
       const or =await Order.findOneById(orderId)
       await Order.merge(or!, order).save()
       return "Succesfully changed new order"
-
   }
 
 }
