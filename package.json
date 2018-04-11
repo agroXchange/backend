@@ -9,6 +9,7 @@
     "@types/koa-bodyparser": "^4.2.0",
     "@types/koa-multer": "^1.0.0",
     "@types/koa-router": "^7.0.27",
+    "@types/koa-static": "^4.0.0",
     "bcrypt": "^2.0.0",
     "jsonwebtoken": "^8.2.1",
     "kcors": "^2.2.1",
@@ -16,6 +17,7 @@
     "koa-bodyparser": "^4.2.0",
     "koa-multer": "^1.0.2",
     "koa-router": "^7.4.0",
+    "koa-static": "^4.0.2",
     "pg": "^7.4.1",
     "routing-controllers": "^0.7.7",
     "typeorm": "^0.1.16"
