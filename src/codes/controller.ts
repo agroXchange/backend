@@ -10,8 +10,14 @@ import {
 
 } from 'routing-controllers'
 
+
+
+import { EntityFromQuery } from "typeorm-routing-controllers-extensions";
+
+
 import { Code } from '../codes/entity'
 import { Validate } from 'class-validator'
+import { getConnection } from "typeorm";
 
 
 
@@ -33,4 +39,23 @@ export default class CodeController {
         return Code.findOneById(id)
 
     }
+
+
+
+
+    @Get("/codes")
+    @HttpCode(200)
+    get(@EntityFromQuery("code") code: Code) {
+        return code;
+    }
+
+
+
+
+    // const code = await getConnection()
+    //     .createQueryBuilder()
+    //     .select()
+    //     .from(Code, "user")
+    //     .where("code.code = :id", { id: 1 })
+    //     .getOne();
 }
