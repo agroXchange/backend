@@ -10,7 +10,8 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam
+  HeaderParam,
+  UploadedFile
 } from 'routing-controllers'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
@@ -18,6 +19,7 @@ import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
 import { User } from '../users/entity'
 import * as request from 'superagent'
+import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 
 
 @JsonController()
@@ -42,15 +44,16 @@ export default class ProductController {
   @HttpCode(200)
   async addProduct(
     @Param('id') sellerId: number,
-    @Body() product: Product
+    @Body() product: Product,
+    @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
     const user = await User.findOneById(sellerId)
-    const code = await Code.findOneById(product.code)
 
     if(!user) throw new BadRequestError("User doesn't exist.")
+
     await Product.create({
     name: product.name,
-    photo: product.photo,
+    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
     volume: product.volume,
     price: product.price,
     description: product.description,
@@ -58,8 +61,7 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    user: user,
-    code: code
+    user: user
 
     }).save()
     return "Succesfully added new product";

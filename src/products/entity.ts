@@ -17,7 +17,7 @@ export class Product extends BaseEntity {
   @Column('text',{ nullable: false })
   name: string;
 
-  @IsString()
+
   @Column('text', { nullable: true })
   photo: string
 
@@ -30,7 +30,7 @@ export class Product extends BaseEntity {
   price: number;
 
   @IsString()
-  @Column('text', { nullable: false })
+  @Column('text', { nullable: true })
   description: string;
 
   @Column('date', { name: 'edate' })
@@ -47,13 +47,17 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: true })
   certificate: string;
 
+  @IsString()
+  @Column('text', { nullable: true })
+  code: string;
+
   @ManyToOne(_ => User, user => user.products)
   user: User;
 
   @OneToMany(_ => Order, order => order.product)
   orders: Order[]
 
-  @ManyToOne(_ => Code, code => code.product)
-  code: Code;
+  //@ManyToOne(_ => Code, code => code.product)
+  //code: Code;
 
  }
