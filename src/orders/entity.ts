@@ -20,7 +20,7 @@ export class Order extends BaseEntity {
   comments: string;
 
   @IsString()
-  @Column('text', { nullable: true })
+  @Column('text',{ nullable: true, default: 'Pending'})
   status: string;
 
   @IsString()

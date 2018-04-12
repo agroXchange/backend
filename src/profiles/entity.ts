@@ -41,7 +41,6 @@ export class Profile extends BaseEntity {
   @Column('text', { nullable: false })
   city: string;
 
-  // @IsString()
   @Column('text', { nullable: true, default: 'null' })
   logo: string;
 

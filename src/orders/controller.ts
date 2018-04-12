@@ -31,7 +31,7 @@ export default class orderController {
     })
   }
 
-  @Authorized()
+  //@Authorized()
   @Get('/orders')
   async getUser(
     @CurrentUser() currentUser: User
@@ -55,18 +55,21 @@ export default class orderController {
   @HttpCode(200)
   async addOrder(
     @Param('id') productId: number,
+    @CurrentUser() currentUser: User,
     @Body() order: Order
   ) {
-    const group: any = await Product.findOneById(productId)
-    await Order.create({
+    const buyer = currentUser.profile
+    const product = await Product.findOneById(productId)
+    const newOrder=  await Order.create({
     volume: order.volume,
     comments: order.comments,
     status: order.status,
     date: order.date,
     ICO: order.ICO,
-
+    buyer: buyer,
+    product: product,
     }).save()
-    return "Succesfully added new order"
+    return newOrder
 
   }
 
@@ -77,9 +80,11 @@ export default class orderController {
     @Param('id') orderId: number,
     @Body() order: Partial<Order>
   ) {
+
       const or =await Order.findOneById(orderId)
-      await Order.merge(or!, order).save()
-      return "Succesfully changed new order"
+      if(!(or!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
+      const merged = await Order.merge(or!, order).save()
+      return merged
   }
 
 }
