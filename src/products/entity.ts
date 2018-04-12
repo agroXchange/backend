@@ -12,9 +12,7 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @IsString()
-  @Column('text',{ nullable: false })
-  name: string;
+
 
 
   @Column('text', { nullable: true })
@@ -52,7 +50,7 @@ export class Product extends BaseEntity {
   @OneToMany(_ => Order, order => order.product)
   orders: Order[]
 
-  //@ManyToOne(_ => Code, code => code.product)
-  //code: Code;
+  @ManyToOne(_ => Code, code => code.product, {eager: true})
+  code: Code;
 
  }

@@ -11,12 +11,14 @@ import {
   HttpCode,
   Post,
   HeaderParam,
-  UploadedFile
+  UploadedFile,
+  CurrentUser
 } from 'routing-controllers'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
+import {User} from "../users/entity";
 import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 
@@ -42,22 +44,24 @@ export default class ProductController {
   }
 
   //@Authorized() //TODO: activate once testing is over
-  @Post('/:id([0-9]+)/products')
+  @Post('/products')
   @HttpCode(200)
+
   async addProduct(
-    @Param('id') sellerId: number,
     @Body() product: Product,
-    @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
+    @CurrentUser() currentUser: User,
+  @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
-    const profile = await Profile.findOneById(sellerId)
-    const code = await Code.findOneById(product.code)
+    const profile = await Profile.findOneById(2)
+    const code = await Code.findOne({
+      where: {code: product.code}
+    })
 
     if(!profile) throw new BadRequestError("Profile doesn't exist.")
 
     await Product.create({
-    name: product.name,
-    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+    //photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
     volume: product.volume,
     price: product.price,
     description: product.description,
@@ -66,6 +70,8 @@ export default class ProductController {
     harvested: product.harvested,
     certificate: product.certificate,
     seller: profile,
+    code: code
+
 
     }).save()
     return "Succesfully added new product";
