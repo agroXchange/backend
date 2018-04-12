@@ -17,7 +17,7 @@ export const sendSignUpMail = (email: string, orgName: string) => {
              \n
              When you're account is approved you will be notified again.`,
     html: `Hello,
-
+             
              Thank you for signing up to agroXchange as ${orgName}.\n
              Your account is currently pending and awaiting approval.\n
              \n
