@@ -67,14 +67,16 @@ export default class orderController {
     const buyer = currentUser
     const product = await Product.findOneById(productId)
     const newOrder=  await Order.create({
-    volume: order.volume,
-    comments: order.comments,
-    date: new Date(),
-    ICO: order.ICO,
-    buyer: buyer,
-    product: product,
-    }).save()
+      volume: order.volume,
+      comments: order.comments,
+      date: new Date(),
+      ICO: order.ICO,
+      buyer: buyer,
+      product: product,
+      }).save()
+
     return newOrder
+  }
 
   @Authorized() //TODO: activate once testing is over
   @Delete('/orders/:id')
