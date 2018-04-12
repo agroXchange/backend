@@ -20,20 +20,10 @@ export default class UserController {
 
   @Authorized()
   @Get('/users/:id([0-9]+)')
-  getUser(
-    @Param('id') id: number,
-    @CurrentUser() currentUser: User
+  async getUser(
+    @Param('id') id: number
   ) {
-    if(currentUser.id === id) {
-      return User.find({
-        where: {id},
-        relations: ['products', 'orders', 'profile']
-      })
-    }
-
-    return User.find({
-      where: {id}
-    })
+    return User.findOneById(id)
   }
 
   @Authorized()
@@ -106,7 +96,7 @@ export default class UserController {
   ) {
     const {email, password, ...profile} = body
 
-    const profileEntity = await Profile.create(profile).save()
+    const profileEntity = await Profile.create({...profile, email}).save()
     const userEntity = User.create({email, approved: true})
 
     await userEntity.setPassword(password)
