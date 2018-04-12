@@ -27,10 +27,23 @@ import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 export default class ProductController {
 
   //@Authorized() //TODO: activate once testing is over
+  @Get('/productss')
+  @HttpCode(200)
+  getProductss(
+
+    @CurrentUser() currentUser: User
+  ) {
+      return Product.find({
+      where: {seller: currentUser}
+
+    })
+  }
+
   @Get('/products')
   @HttpCode(200)
-  getProducts() {
-    return Product.find()
+  getProducts(
+  ) {
+      return Product.find()
   }
 
   //@Authorized() //TODO: activate once testing is over
