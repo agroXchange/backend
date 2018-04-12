@@ -50,15 +50,15 @@ export default class ProductController {
   async addProduct(
     @Body() product: Product,
     @CurrentUser() currentUser: User,
-  @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
+    @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
-    const profile = await Profile.findOneById(2)
+
     const code = await Code.findOne({
       where: {code: product.code}
     })
 
-    if(!profile) throw new BadRequestError("Profile doesn't exist.")
+    if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
     await Product.create({
     //photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
@@ -69,7 +69,7 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    seller: profile,
+    seller: currentUser.profile,
     code: code
 
 

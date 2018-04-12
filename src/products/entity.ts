@@ -13,8 +13,6 @@ export class Product extends BaseEntity {
   id?: number;
 
 
-
-
   @Column('text', { nullable: true })
   photo: string
 

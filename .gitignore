@@ -3,3 +3,4 @@ node_modules
 target
 yarn-error.log
 public/uploads
+src/mailApiKey.ts
