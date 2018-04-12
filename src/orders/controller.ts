@@ -61,10 +61,9 @@ export default class orderController {
   @HttpCode(200)
   async addOrder(
     @Param('id') productId: number,
-    //@CurrentUser() currentUser: User,
+    @CurrentUser() currentUser: User,
     @Body() order: Partial<Order>
   ) {
-    const currentUser = await User.findOneById(1)
     const buyer = currentUser
     const product = await Product.findOneById(productId)
     const newOrder=  await Order.create({
