@@ -46,8 +46,14 @@ export default class orderController {
   getOrderbyID(
     @Param('id') id: number
   ) {
-    const group = Order.findOneById(id)
+    const group = Order.find(({
+      where: {id},
+      relations: ['buyer']
+    }))
+
     return group
+
+
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -55,16 +61,16 @@ export default class orderController {
   @HttpCode(200)
   async addOrder(
     @Param('id') productId: number,
-    @CurrentUser() currentUser: User,
-    @Body() order: Order
+    //@CurrentUser() currentUser: User,
+    @Body() order: Partial<Order>
   ) {
-    const buyer = currentUser.profile
+    const currentUser = await User.findOneById(1)
+    const buyer = currentUser
     const product = await Product.findOneById(productId)
     const newOrder=  await Order.create({
     volume: order.volume,
     comments: order.comments,
-    status: order.status,
-    date: order.date,
+    date: new Date,
     ICO: order.ICO,
     buyer: buyer,
     product: product,
