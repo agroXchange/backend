@@ -63,14 +63,33 @@ export default class orderController {
     const newOrder=  await Order.create({
     volume: order.volume,
     comments: order.comments,
-    status: order.status,
-    date: order.date,
+    date: new Date(),
     ICO: order.ICO,
     buyer: buyer,
     product: product,
     }).save()
     return newOrder
 
+  @Authorized() //TODO: activate once testing is over
+  @Delete('/orders/:id')
+  async deleteOrder(
+    @CurrentUser() currentUser: User,
+    @Param('id') id: number,
+  ) {
+    const usersOrders = await Order.find({where: {buyer : currentUser.profile}})
+    return usersOrders.map(async order => {
+      if (order.id === id && order.status === 'Pending') {
+        await order.remove()
+        return { message: 'You succesfully deleted the Order!'}
+      }
+      else if (order.id === id && order.status === 'Pending') {
+        await order.remove()
+        return { message: 'You succesfully deleted the Order!'}
+      }
+      else {
+        return { message: 'You are not allowed to delete this Order. Please contact us!'}
+      }
+    })
   }
 
   //@Authorized() //TODO: activate once testing is over

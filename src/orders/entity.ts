@@ -25,7 +25,7 @@ export class Order extends BaseEntity {
 
   @IsString()
   @Column('date', { nullable: true })
-  date: string;
+  date: Date;
 
   @IsString()
   @Column('text', { nullable: true })
