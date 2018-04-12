@@ -2,6 +2,7 @@ import {Authorized, BadRequestError, Body, CurrentUser, Get, JsonController, Par
 import {Profile} from "../profiles/entity";
 import {IsEmail, IsString, MinLength} from "class-validator";
 import {User} from "./entity";
+import {sendSignUpMail} from "../mails/templates";
 
 class ValidateSignupPayload extends Profile {
 
@@ -111,7 +112,11 @@ export default class UserController {
     await userEntity.setPassword(password)
     userEntity.profile = profileEntity
 
-    return userEntity.save()
+    const user =  userEntity.save()
+
+    await sendSignUpMail(email, profile.name)
+
+    return user
   }
 
 }
