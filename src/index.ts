@@ -29,7 +29,7 @@ const app = createKoaServer({
 
       if (token) {
         const {id} = verify(token)
-        return User.findOne({where: {id}, relations: ['profile']})
+        return User.findOne({where: {id}})
       }
     }
     return undefined
