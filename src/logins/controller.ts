@@ -74,7 +74,9 @@ export default class LoginController {
     if(!!(password && verifyPasswordToken(token, user.updatedAt.toISOString()))) {
       await user.setPassword(password)
       user.updatedAt = new Date()
-      return user.save()
+      await user.save()
+
+      return { message: "Successfully reset your password."}
     }
 
   }
