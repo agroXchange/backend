@@ -7,9 +7,17 @@ interface JwtPayload {
 }
 
 export const sign = (data: JwtPayload): string => {
-  return jwt.sign(data, secret, {expiresIn: '3h'})
+  return jwt.sign(data, secret, {expiresIn: '3000h'})
 }
 
 export const verify = (token: string): JwtPayload => {
   return jwt.verify(token, secret) as JwtPayload
+}
+
+export const signPasswordToken = (data: JwtPayload, passwordSecret: string): string => {
+  return jwt.sign(data, passwordSecret, {expiresIn: '1h'})
+}
+
+export const verifyPasswordToken = (token: string, passwordSecret: string): JwtPayload => {
+  return jwt.verify(token, passwordSecret) as JwtPayload
 }
