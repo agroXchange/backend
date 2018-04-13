@@ -33,7 +33,10 @@ export default class LoginController {
     if(!user.approved) throw new BadRequestError("Your profile isn't approved yet.")
 
     const jwt = sign({id: user.id!})
-    return {jwt}
+    return {
+      jwt,
+      id: user.id
+    }
   }
 
   @Post('/forgotpassword')
