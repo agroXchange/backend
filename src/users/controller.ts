@@ -43,12 +43,12 @@ export default class UserController {
   async changeUserInformation(
     @CurrentUser() currentUser: User,
     @Param('id') id: number,
-    @Body() updates: Partial<User>
+    @Body() updates: Partial<Profile>
   ) {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
-    const user = await User.findOneById(id)
-    if (!user) throw new NotFoundError(`User does not exist!`)
-    const changedUser = await User.merge(user!, updates).save()
+    const profile = await Profile.findOneById(id)
+    if (!profile) throw new NotFoundError(`User does not exist!`)
+    const changedUser = await Profile.merge(profile, updates).save()
     return changedUser
   }
 
