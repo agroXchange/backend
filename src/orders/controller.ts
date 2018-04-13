@@ -36,7 +36,7 @@ export default class orderController {
   async getUser(
     @CurrentUser() currentUser: User
   ) {
-    const buyer = currentUser.profile
+    const buyer = currentUser
     return Order.find({where: {buyer}})
   }
 
