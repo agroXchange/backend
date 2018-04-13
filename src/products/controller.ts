@@ -27,16 +27,52 @@ import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 export default class ProductController {
 
   //@Authorized() //TODO: activate once testing is over
+  @Get('/:id([0-9]+)/products')
+  @HttpCode(200)
+  async getProducts(
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
+  ) {
+      const user = await User.findOneById(id)
+      if(!user) throw new BadRequestError("no user")
+      return Product.find({
+      where: {seller: user.profile}
+    })
+
+}
+
+@Get('/search/products')
+@HttpCode(200)
+async seacrhProducts(
+  @Body() {code, country}
+)
+{
+    const nCode = await Code.findOne({
+    where: {code: code}
+    })
+
+    if(!nCode) throw new BadRequestError("no valid code")
+
+    const list = await Product.find({
+    where: {code: nCode}
+      })
+
+    }
+
   @Get('/products')
   @HttpCode(200)
-  getProducts() {
-    return Product.find()
+  getAllProducts(
+  ) {
+    console.log("dv")
+      return Product.find()
   }
 
   //@Authorized() //TODO: activate once testing is over
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
-  getOrderbyID(
+
+  getProductID(
+    @CurrentUser() currentUser: User,
     @Param('id') id: number
   ) {
     const product = Product.findOneById(id)
@@ -48,19 +84,20 @@ export default class ProductController {
   @HttpCode(200)
 
   async addProduct(
-    @Body() product: Partial<Product>,
+    @Body() product: Partial <Product>,
     @CurrentUser() currentUser: User,
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
-    const productcode = await Code.findOne({
-      where: {code: product.code}
+
+  const code = await Code.findOne({
+    where: {code: product.code}
     })
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
     const test = await Product.create({
-    //photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
     volume: product.volume,
     price: product.price,
     description: product.description,
@@ -68,13 +105,11 @@ export default class ProductController {
     currency: product.currency,
     harvested: product.harvested,
     certificate: product.certificate,
-    seller: currentUser,
-    code: productcode
+    seller: currentUser.profile,
+    code: code
 
 
     }).save()
-
-
     return "Succesfully added new product";
 
   }
