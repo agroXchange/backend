@@ -82,12 +82,12 @@ export default class UserController {
 
   @Authorized()
   @Get('/users')
-  getAllUsers(
+  async getAllUsers(
     @CurrentUser() currentUser: User
   ) {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
-
-    return User.find()
+    const users = await User.find()
+    return users.filter(user => user.role !== 'admin')
   }
 
   @Post('/users')
