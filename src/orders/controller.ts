@@ -43,17 +43,14 @@ export default class orderController {
   //@Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
-  getOrderbyID(
+  async getOrderbyID(
     @Param('id') id: number
   ) {
-    const orders = Order.find(({
+    const order = await Order.findOne({
       where: {id},
       relations: ['buyer']
-    }))
-
-    return orders
-
-
+    })
+    return order
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -105,12 +102,15 @@ export default class orderController {
   @HttpCode(200)
   async changeOrder(
     @Param('id') orderId: number,
-    @Body() order: Partial<Order>
+    @Body() updates: Partial<Order>
   ) {
-      const or =await Order.findOneById(orderId)
-      if(!(or!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
-      const merged = await Order.merge(or!, order).save()
-      return merged
+      const order = await Order.findOneById(orderId)
+      if(!(order!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
+      await Order.merge(order!, updates).save()
+      const updatedOrder = await Order.findOne({
+        where: {orderId},
+        relations: ['buyer']
+      })
+      return updatedOrder
   }
-
 }
