@@ -110,7 +110,6 @@ async seacrhProducts(
 
 
     }).save()
-
     return "Succesfully added new product";
 
   }
