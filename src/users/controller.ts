@@ -2,7 +2,7 @@ import {Authorized, BadRequestError, Body, CurrentUser, Get, JsonController, Par
 import {Profile} from "../profiles/entity";
 import {IsEmail, IsString, MinLength} from "class-validator";
 import {User} from "./entity";
-import {sendSignUpMail} from "../mails/templates";
+import {sendSignUpMail, approvedMail} from "../mails/templates";
 
 class ValidateSignupPayload extends Profile {
 
@@ -62,6 +62,9 @@ export default class UserController {
     const user = await User.findOneById(id)
     if (!user) throw new NotFoundError(`User does not exist!`)
     user!.approved = true
+
+    await approvedMail(user.email, user.profile.name)
+
     return user!.save()
   }
 
