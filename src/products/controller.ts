@@ -53,9 +53,9 @@ export default class ProductController {
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
-    // const code = await Code.findOne({
-    //   where: {code: product.code}
-    // })
+    const productcode = await Code.findOne({
+      where: {code: product.code}
+    })
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
@@ -69,7 +69,7 @@ export default class ProductController {
     harvested: product.harvested,
     certificate: product.certificate,
     seller: currentUser,
-    //code: code
+    code: productcode
 
 
     }).save()
