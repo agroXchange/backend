@@ -46,8 +46,14 @@ export default class orderController {
   getOrderbyID(
     @Param('id') id: number
   ) {
-    const group = Order.findOneById(id)
-    return group
+    const orders = Order.find(({
+      where: {id},
+      relations: ['buyer']
+    }))
+
+    return orders
+
+
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -56,21 +62,42 @@ export default class orderController {
   async addOrder(
     @Param('id') productId: number,
     @CurrentUser() currentUser: User,
-    @Body() order: Order
+    @Body() order: Partial<Order>
   ) {
-    const buyer = currentUser.profile
+    const buyer = currentUser
     const product = await Product.findOneById(productId)
     const newOrder=  await Order.create({
-    volume: order.volume,
-    comments: order.comments,
-    status: order.status,
-    date: order.date,
-    ICO: order.ICO,
-    buyer: buyer,
-    product: product,
-    }).save()
-    return newOrder
+      volume: order.volume,
+      comments: order.comments,
+      date: new Date(),
+      ICO: order.ICO,
+      buyer: buyer,
+      product: product,
+      }).save()
 
+    return newOrder
+  }
+
+  @Authorized() //TODO: activate once testing is over
+  @Delete('/orders/:id')
+  async deleteOrder(
+    @CurrentUser() currentUser: User,
+    @Param('id') id: number,
+  ) {
+    const usersOrders = await Order.find({where: {buyer : currentUser.profile}})
+    return usersOrders.map(async order => {
+      if (order.id === id && order.status === 'Pending') {
+        await order.remove()
+        return { message: 'You succesfully deleted the Order!'}
+      }
+      else if (order.id === id && order.status === 'Pending') {
+        await order.remove()
+        return { message: 'You succesfully deleted the Order!'}
+      }
+      else {
+        return { message: 'You are not allowed to delete this Order. Please contact us!'}
+      }
+    })
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -80,7 +107,6 @@ export default class orderController {
     @Param('id') orderId: number,
     @Body() order: Partial<Order>
   ) {
-
       const or =await Order.findOneById(orderId)
       if(!(or!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
       const merged = await Order.merge(or!, order).save()

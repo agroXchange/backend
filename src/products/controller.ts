@@ -27,21 +27,42 @@ import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 export default class ProductController {
 
   //@Authorized() //TODO: activate once testing is over
-  @Get('/productss')
+  @Get('/:id([0-9]+)/products')
   @HttpCode(200)
-  getProductss(
-
+  async getProducts(
+    @Param('id') id: number,
     @CurrentUser() currentUser: User
   ) {
+      const user = await User.findOneById(id)
+      if(!user) throw new BadRequestError("no user")
       return Product.find({
-      where: {seller: currentUser}
-
+      where: {seller: user.profile}
     })
-  }
+    //if (user !== currentUser) {
+     //const list = Product.find({
+    //where: {seller: user.profile}
+  //})
+
+}
+
+@Get('/search/products')
+@HttpCode(200)
+seacrhProducts(
+  @Body() {code}
+)
+{
+    const nCode = Code.find({
+    where: {code: "0711905000"}
+    })
+    if(!nCode) throw new BadRequestError("no valid code")
+    return Product.find({
+    where: {code: {nCode}}
+  })
+}
 
   @Get('/products')
   @HttpCode(200)
-  getProducts(
+  getAllProducts(
   ) {
       return Product.find()
   }
@@ -49,7 +70,9 @@ export default class ProductController {
   //@Authorized() //TODO: activate once testing is over
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
-  getOrderbyID(
+
+  getProductID(
+    @CurrentUser() currentUser: User,
     @Param('id') id: number
   ) {
     const product = Product.findOneById(id)
@@ -61,15 +84,15 @@ export default class ProductController {
   @HttpCode(200)
 
   async addProduct(
-    @Body() product: Product,
+    @Body() product: Partial <Product>,
     @CurrentUser() currentUser: User,
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
 
-    const code = await Code.findOne({
-      where: {code: product.code}
-    })
+  //  const code = await Code.findOne({
+    //  where: {code: product.code}
+    //})
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
@@ -83,7 +106,7 @@ export default class ProductController {
     harvested: product.harvested,
     certificate: product.certificate,
     seller: currentUser.profile,
-    code: code
+  //  code: code
 
 
     }).save()
