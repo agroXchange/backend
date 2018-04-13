@@ -31,6 +31,12 @@ export class User extends BaseEntity {
   @JoinColumn()
   profile: Profile;
 
+  @Column('timestamp', {default: new Date()})
+  createdAt: Date
+
+  @Column('timestamp', {default: new Date()})
+  updatedAt: Date
+
   async setPassword(pass: string) {
     this.password = await bcrypt.hash(pass, 10)
   }

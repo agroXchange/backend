@@ -26,3 +26,19 @@ export const sendSignUpMail = (email: string, orgName: string) => {
 
   return sgMail.send(msg)
 }
+
+export const sendResetPasswordLink = (email: string, token: string) => {
+  const baseUrl = 'http://localhost:3000/reset-password?token='
+  const msg = {
+    to: email,
+    from: sender,
+    subject: 'Password reset link for agroXchange.',
+    text: `Hello,\n
+             \n
+             Here is a link for your password reset ${baseUrl + token}`,
+    html: `Hello,
+             
+             Here is a link for your password reset <a href="${baseUrl + token}">${baseUrl + token}</a>`
+  }
+  return sgMail.send(msg)
+}
