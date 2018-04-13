@@ -38,32 +38,32 @@ export default class ProductController {
       return Product.find({
       where: {seller: user.profile}
     })
-    //if (user !== currentUser) {
-     //const list = Product.find({
-    //where: {seller: user.profile}
-  //})
 
 }
 
 @Get('/search/products')
 @HttpCode(200)
-seacrhProducts(
-  @Body() {code}
+async seacrhProducts(
+  @Body() {code, country}
 )
 {
-    const nCode = Code.find({
-    where: {code: "0711905000"}
+    const nCode = await Code.findOne({
+    where: {code: code}
     })
+
     if(!nCode) throw new BadRequestError("no valid code")
-    return Product.find({
-    where: {code: {nCode}}
-  })
-}
+
+    const list = await Product.find({
+    where: {code: nCode}
+      })
+
+    }
 
   @Get('/products')
   @HttpCode(200)
   getAllProducts(
   ) {
+    console.log("dv")
       return Product.find()
   }
 
@@ -90,14 +90,14 @@ seacrhProducts(
   ) {
 
 
-  //  const code = await Code.findOne({
-    //  where: {code: product.code}
-    //})
+  const code = await Code.findOne({
+    where: {code: product.code}
+    })
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
-    await Product.create({
-    //photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+    const test = await Product.create({
+    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
     volume: product.volume,
     price: product.price,
     description: product.description,
@@ -106,10 +106,11 @@ seacrhProducts(
     harvested: product.harvested,
     certificate: product.certificate,
     seller: currentUser.profile,
-  //  code: code
+    code: code
 
 
     }).save()
+
     return "Succesfully added new product";
 
   }
