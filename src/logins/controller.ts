@@ -64,9 +64,9 @@ export default class LoginController {
   ) {
     if(!almostToken.startsWith("Bearer ")) throw new UnauthorizedError('Invalid auth header.')
     const token = almostToken.split(" ")[1]
-    console.log(token)
+
     const payload = jwt.decode(token)
-    console.log(payload)
+
     const user = await User.findOneById(payload.id)
     if(!user) throw new BadRequestError('No user found.')
 
