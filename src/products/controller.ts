@@ -28,7 +28,7 @@ import { getConnection, getRepository } from 'typeorm'
 export default class ProductController {
 
   //@Authorized() //TODO: activate once testing is over
-  @Get('/:id([0-9]+)/products')
+  @Get('/profiles/:id([0-9]+)/products')
   @HttpCode(200)
   async getProducts(
     @Param('id') id: number,
