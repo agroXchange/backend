@@ -12,7 +12,8 @@ import {
   Post,
   HeaderParam,
   UploadedFile,
-  CurrentUser
+  CurrentUser,
+  QueryParam
 } from 'routing-controllers'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
@@ -21,7 +22,7 @@ import { Validate } from 'class-validator'
 import {User} from "../users/entity";
 import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
-
+import { getConnection, getRepository } from "typeorm";
 
 @JsonController()
 export default class ProductController {
@@ -44,26 +45,41 @@ export default class ProductController {
 @Get('/search/products')
 @HttpCode(200)
 async seacrhProducts(
-  @Body() {code, country}
+    @Body() {country, code}
 )
 {
-    const nCode = await Code.findOne({
-    where: {code: code}
-    })
-
-    if(!nCode) throw new BadRequestError("no valid code")
-
-    const list = await Product.find({
-    where: {code: nCode}
-      })
-
+  if (country && code){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.seller", "profile")
+    .where("profile.country = :country", {country: country})
+    .innerJoin("product.code", "code")
+    .andWhere("code.code = :code", {code: code})
+    .getMany()
+    return list
+  }
+  if (!country){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.code", "code")
+    .andWhere("code.code = :code", {code: code})
+    .getMany()
+    return list
+  }
+  if (!code){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.seller", "profile")
+    .where("profile.country = :country", {country: country})
+    .getMany()
+    return list
+  }
     }
 
   @Get('/products')
   @HttpCode(200)
   getAllProducts(
   ) {
-    console.log("dv")
       return Product.find()
   }
 
@@ -89,7 +105,7 @@ async seacrhProducts(
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
 
-
+console.log(currentUser)
   const code = await Code.findOne({
     where: {code: product.code}
     })
