@@ -12,16 +12,17 @@ import {
   Post,
   HeaderParam,
   UploadedFile,
-  CurrentUser
+  CurrentUser,
+  QueryParam
 } from 'routing-controllers'
 import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
-import {User} from "../users/entity";
+import {User} from '../users/entity'
 import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
-
+import { getConnection, getRepository } from 'typeorm'
 
 @JsonController()
 export default class ProductController {
@@ -44,26 +45,41 @@ export default class ProductController {
 @Get('/search/products')
 @HttpCode(200)
 async seacrhProducts(
-  @Body() {code, country}
+    @Body() {country, code}
 )
 {
-    const nCode = await Code.findOne({
-    where: {code: code}
-    })
-
-    if(!nCode) throw new BadRequestError("no valid code")
-
-    const list = await Product.find({
-    where: {code: nCode}
-      })
-
+  if (country && code){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.seller", "profile")
+    .where("profile.country = :country", {country: country})
+    .innerJoin("product.code", "code")
+    .andWhere("code.code = :code", {code: code})
+    .getMany()
+    return list
+  }
+  if (!country){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.code", "code")
+    .andWhere("code.code = :code", {code: code})
+    .getMany()
+    return list
+  }
+  if (!code){
+    const list = await getRepository(Product)
+    .createQueryBuilder("product")
+    .innerJoin("product.seller", "profile")
+    .where("profile.country = :country", {country: country})
+    .getMany()
+    return list
+  }
     }
 
   @Get('/products')
   @HttpCode(200)
   getAllProducts(
   ) {
-    console.log("dv")
       return Product.find()
   }
 
@@ -88,29 +104,24 @@ async seacrhProducts(
     @CurrentUser() currentUser: User,
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
-
-
-  const code = await Code.findOne({
-    where: {code: product.code}
+    const code = await Code.findOne({
+      where: {code: product.code}
     })
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
     const test = await Product.create({
-    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
-    volume: product.volume,
-    price: product.price,
-    description: product.description,
-    expiration: product.expiration,
-    currency: product.currency,
-    harvested: product.harvested,
-    certificate: product.certificate,
-    seller: currentUser.profile,
-    code: code
-
-
+      photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+      volume: product.volume,
+      price: product.price,
+      description: product.description,
+      expiration: product.expiration,
+      currency: product.currency,
+      harvested: product.harvested,
+      certificate: product.certificate,
+      seller: currentUser.profile,
+      code: code
     }).save()
-    return "Succesfully added new product";
-
+    return "Succesfully added new product"
   }
 }
