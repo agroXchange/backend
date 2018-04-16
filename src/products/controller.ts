@@ -35,10 +35,10 @@ export default class ProductController {
     @Param('id') id: number,
     @CurrentUser() currentUser: User
   ) {
-      const user = await User.findOneById(id)
-      if(!user) throw new BadRequestError("no user")
+      const profile = await Profile.findOneById(id)
+      if(!profile) throw new BadRequestError("no user")
       return Product.find({
-      where: {seller: user.profile}
+      where: {seller: profile}
     })
 
 }

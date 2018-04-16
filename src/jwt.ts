@@ -4,7 +4,8 @@ const secret = process.env.JWT_SECRET || 'Jalsdk#O@3o2849ahsDFAO3rrb'
 
 interface JwtPayload {
   id: number,
-  role: string
+  role: string,
+  profileId: number
 }
 
 export const sign = (data: JwtPayload): string => {

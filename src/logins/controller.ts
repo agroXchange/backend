@@ -32,10 +32,9 @@ export default class LoginController {
     if(!await user.checkPassword(password)) throw new BadRequestError('Incorrect password.')
     if(!user.approved) throw new BadRequestError("Your profile isn't approved yet.")
 
-    const jwt = sign({id: user.id!, role: user.role!})
+    const jwt = sign({id: user.id!, role: user.role!, profileId: user.profile.id!})
     return {
-      jwt,
-      id: user.id
+      jwt
     }
   }
 
