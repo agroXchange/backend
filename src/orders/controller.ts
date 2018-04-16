@@ -61,7 +61,7 @@ export default class orderController {
     @CurrentUser() currentUser: User,
     @Body() order: Partial<Order>
   ) {
-    const buyer = currentUser
+    const buyer = currentUser.profile
     const product = await Product.findOneById(productId)
     const newOrder=  await Order.create({
       volume: order.volume,

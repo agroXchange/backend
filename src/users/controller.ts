@@ -24,11 +24,11 @@ class ValidateSignupPayload extends Profile {
 export default class UserController {
 
   @Authorized()
-  @Get('/users/:id([0-9]+)')
+  @Get('/profiles/:id([0-9]+)')
   async getUser(
     @Param('id') id: number
   ) {
-    return User.findOneById(id)
+    return Profile.findOneById(id)
   }
 
   @Authorized()
@@ -83,7 +83,8 @@ export default class UserController {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
     const userId = await User.findOneById(id)
     if (!userId) throw new NotFoundError(`User does not exist!`)
-    await userId.remove()
+
+    await userId.remove(),userId.profile.remove()
     const allUsers = await User.find()
     return allUsers.filter(user=> user.role !== 'admin')
 
@@ -100,19 +101,16 @@ export default class UserController {
   }
 
   @Authorized()
-  @Patch('/users/:id/logo')
+  @Patch('/profiles/:id/logo')
   async updateUser(
     @CurrentUser() currentUser: User,
     @Param('id') id: number,
     @UploadedFile('logo', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
-    if (!(currentUser.id === id)) throw new UnauthorizedError("You're not authorized to do this.")
+    if (!(currentUser.profile.id === id)) throw new UnauthorizedError("You're not authorized to do this.")
 
-    const user = await User.findOneById(id)
-    if (!user) throw new NotFoundError('Somehow no user was found.')
-
-    const profile = await Profile.findOneById(user.profile.id)
-    if (!profile) throw new NotFoundError('No profile for this user.')
+    const profile = await Profile.findOneById(id)
+    if (!profile) throw new NotFoundError('No profile found.')
 
     profile.logo = baseUrl + file.path.substring(6, file.path.length)
 
@@ -128,7 +126,7 @@ export default class UserController {
     const {email, password, ...profile} = body
 
     const profileEntity = await Profile.create({...profile, email}).save()
-    const userEntity = User.create({email, approved: true})
+    const userEntity = User.create({email})
 
     await userEntity.setPassword(password)
     userEntity.profile = profileEntity

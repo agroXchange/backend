@@ -32,10 +32,9 @@ export default class LoginController {
     if(!await user.checkPassword(password)) throw new BadRequestError('Incorrect password.')
     if(!user.approved) throw new BadRequestError("Your profile isn't approved yet.")
 
-    const jwt = sign({id: user.id!, role: user.role!})
+    const jwt = sign({id: user.id!, role: user.role!, profileId: user.profile.id!})
     return {
-      jwt,
-      id: user.id
+      jwt
     }
   }
 
@@ -65,9 +64,9 @@ export default class LoginController {
   ) {
     if(!almostToken.startsWith("Bearer ")) throw new UnauthorizedError('Invalid auth header.')
     const token = almostToken.split(" ")[1]
-    console.log(token)
+
     const payload = jwt.decode(token)
-    console.log(payload)
+
     const user = await User.findOneById(payload.id)
     if(!user) throw new BadRequestError('No user found.')
 
