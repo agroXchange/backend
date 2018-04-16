@@ -17,11 +17,11 @@ export class Product extends BaseEntity {
   photo: string
 
   @IsInt()
-  @Column('float', { nullable: false })
+  @Column('real', { nullable: false })
   volume: number;
 
   @IsInt()
-  @Column('float', { nullable: false })
+  @Column('real', { nullable: false })
   price: number;
 
   @IsString()
