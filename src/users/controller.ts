@@ -1,8 +1,13 @@
-import {Authorized, BadRequestError, Body, CurrentUser, Get, JsonController, Param, Post, Patch, Delete, NotFoundError} from "routing-controllers";
+import {
+  Authorized, BadRequestError, Body, CurrentUser, Get, JsonController, Param, Post, Patch, Delete, NotFoundError,
+  UnauthorizedError, UploadedFile
+} from "routing-controllers";
 import {Profile} from "../profiles/entity";
 import {IsEmail, IsString, MinLength} from "class-validator";
 import {User} from "./entity";
 import {sendSignUpMail, approvedMail} from "../mails/templates";
+import {FILE_UPLOAD_OPTIONS} from "../uploadConfig";
+import {baseUrl} from "../constants";
 
 class ValidateSignupPayload extends Profile {
 
@@ -92,6 +97,28 @@ export default class UserController {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
     const users = await User.find()
     return users.filter(user => user.role !== 'admin')
+  }
+
+  @Authorized()
+  @Patch('/users/:id/logo')
+  async updateUser(
+    @CurrentUser() currentUser: User,
+    @Param('id') id: number,
+    @UploadedFile('logo', {options: FILE_UPLOAD_OPTIONS}) file: any
+  ) {
+    if (!(currentUser.id === id)) throw new UnauthorizedError("You're not authorized to do this.")
+
+    const user = await User.findOneById(id)
+    if (!user) throw new NotFoundError('Somehow no user was found.')
+
+    const profile = await Profile.findOneById(user.profile.id)
+    if (!profile) throw new NotFoundError('No profile for this user.')
+
+    profile.logo = baseUrl + file.path.substring(6, file.path.length)
+
+    await profile.save()
+
+    return { message: 'Successfully added a profile picture.'}
   }
 
   @Post('/users')

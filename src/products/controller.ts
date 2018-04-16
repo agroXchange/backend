@@ -23,6 +23,7 @@ import {User} from '../users/entity'
 import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 import { getConnection, getRepository } from 'typeorm'
+import {baseUrl} from "../constants";
 
 @JsonController()
 export default class ProductController {
@@ -111,7 +112,7 @@ async seacrhProducts(
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
     const test = await Product.create({
-      photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+      photo: baseUrl + file.path.substring(6, file.path.length),
       volume: product.volume,
       price: product.price,
       description: product.description,
