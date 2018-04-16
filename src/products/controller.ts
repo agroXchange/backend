@@ -3,19 +3,15 @@ import {
   JsonController,
   Param,
   BadRequestError,
-  NotFoundError,
   Get,
   Body,
-  Patch,
-  Delete,
   HttpCode,
   Post,
-  HeaderParam,
   UploadedFile,
   CurrentUser,
   QueryParam
 } from 'routing-controllers'
-import { Order } from '../orders/entity'
+
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
@@ -45,8 +41,10 @@ export default class ProductController {
 
 @Get('/search/products')
 @HttpCode(200)
-async seacrhProducts(
-    @Body() {country, code}
+async searchProducts(
+  @QueryParam("code") code: string,
+  @QueryParam("code") country: string
+    //@Body() {country, code}
 )
 {
   if (country && code){
@@ -57,6 +55,7 @@ async seacrhProducts(
     .innerJoin("product.code", "code")
     .andWhere("code.code = :code", {code: code})
     .getMany()
+    console.log("cc" + list)
     return list
   }
   if (!country){
@@ -65,6 +64,7 @@ async seacrhProducts(
     .innerJoin("product.code", "code")
     .andWhere("code.code = :code", {code: code})
     .getMany()
+    console.log("code" + list)
     return list
   }
   if (!code){
@@ -73,7 +73,12 @@ async seacrhProducts(
     .innerJoin("product.seller", "profile")
     .where("profile.country = :country", {country: country})
     .getMany()
+    console.log("country" + list)
     return list
+  }
+
+  else {
+    return Product.find()
   }
     }
 
