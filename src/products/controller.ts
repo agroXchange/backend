@@ -19,10 +19,10 @@ import { Order } from '../orders/entity'
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
-import {User} from "../users/entity";
+import {User} from '../users/entity'
 import { Profile } from '../profiles/entity'
 import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
-import { getConnection, getRepository } from "typeorm";
+import { getConnection, getRepository } from 'typeorm'
 
 @JsonController()
 export default class ProductController {
@@ -104,29 +104,24 @@ async seacrhProducts(
     @CurrentUser() currentUser: User,
     @UploadedFile('productPhoto', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
-
-console.log(currentUser)
-  const code = await Code.findOne({
-    where: {code: product.code}
+    const code = await Code.findOne({
+      where: {code: product.code}
     })
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
     const test = await Product.create({
-    photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
-    volume: product.volume,
-    price: product.price,
-    description: product.description,
-    expiration: product.expiration,
-    currency: product.currency,
-    harvested: product.harvested,
-    certificate: product.certificate,
-    seller: currentUser.profile,
-    code: code
-
-
+      photo: `http://localhost:4008${file.path.substring(6, file.path.length)}`,
+      volume: product.volume,
+      price: product.price,
+      description: product.description,
+      expiration: product.expiration,
+      currency: product.currency,
+      harvested: product.harvested,
+      certificate: product.certificate,
+      seller: currentUser.profile,
+      code: code
     }).save()
-    return "Succesfully added new product";
-
+    return "Succesfully added new product"
   }
 }
