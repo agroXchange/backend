@@ -43,7 +43,7 @@ export default class ProductController {
 @HttpCode(200)
 async searchProducts(
   @QueryParam("code") code: string,
-  @QueryParam("code") country: string
+  @QueryParam("country") country: string
     //@Body() {country, code}
 )
 {
