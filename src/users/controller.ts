@@ -61,11 +61,12 @@ export default class UserController {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
     const user = await User.findOneById(id)
     if (!user) throw new NotFoundError(`User does not exist!`)
-    user!.approved = true
-
+    user.approved = true
     await approvedMail(user.email, user.profile.name)
 
-    return user!.save()
+    await user.save()
+    const allUsers = await User.find()
+    return allUsers.filter(user=> user.role !== 'admin' && user.approved === false)
   }
 
   @Authorized()
@@ -75,12 +76,12 @@ export default class UserController {
     @Param('id') id: number,
   ) {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
-    const user = await User.findOneById(id)
-    if (!user) throw new NotFoundError(`User does not exist!`)
-    await user.remove()
-    return {
-      message: "You succesfully deleted the user!"
-    }
+    const userId = await User.findOneById(id)
+    if (!userId) throw new NotFoundError(`User does not exist!`)
+    await userId.remove()
+    const allUsers = await User.find()
+    return allUsers.filter(user=> user.role !== 'admin')
+
   }
 
   @Authorized()
