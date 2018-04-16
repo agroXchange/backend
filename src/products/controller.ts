@@ -28,7 +28,7 @@ import {baseUrl} from "../constants";
 @JsonController()
 export default class ProductController {
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized() //TODO: activate once testing is over
   @Get('/profiles/:id([0-9]+)/products')
   @HttpCode(200)
   async getProducts(
@@ -84,7 +84,7 @@ async seacrhProducts(
       return Product.find()
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized() //TODO: activate once testing is over
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
 
@@ -96,10 +96,9 @@ async seacrhProducts(
     return product
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized() //TODO: activate once testing is over
   @Post('/products')
   @HttpCode(200)
-
   async addProduct(
     @Body() product: Partial <Product>,
     @CurrentUser() currentUser: User,
@@ -126,9 +125,8 @@ async seacrhProducts(
     return "Succesfully added new product"
   }
 
-
+@Authorized()
 @Patch('/products/:id([0-9]+)')
-
 async changeProduct(
   @CurrentUser() currentUser: User,
   @Param('id') id: number,
