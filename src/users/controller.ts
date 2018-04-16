@@ -78,7 +78,8 @@ export default class UserController {
     if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
     const userId = await User.findOneById(id)
     if (!userId) throw new NotFoundError(`User does not exist!`)
-    await userId.remove()
+
+    await userId.remove(),userId.profile.remove()
     const allUsers = await User.find()
     return allUsers.filter(user=> user.role !== 'admin')
 
