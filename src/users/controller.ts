@@ -129,7 +129,7 @@ export default class UserController {
     const {email, password, ...profile} = body
 
     const profileEntity = await Profile.create({...profile, email}).save()
-    const userEntity = User.create({email, approved: true})
+    const userEntity = User.create({email})
 
     await userEntity.setPassword(password)
     userEntity.profile = profileEntity
