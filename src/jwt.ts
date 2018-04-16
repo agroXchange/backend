@@ -3,7 +3,8 @@ import * as jwt from 'jsonwebtoken'
 const secret = process.env.JWT_SECRET || 'Jalsdk#O@3o2849ahsDFAO3rrb'
 
 interface JwtPayload {
-  id: number
+  id: number,
+  role: string
 }
 
 export const sign = (data: JwtPayload): string => {
@@ -14,7 +15,7 @@ export const verify = (token: string): JwtPayload => {
   return jwt.verify(token, secret) as JwtPayload
 }
 
-export const signPasswordToken = (data: JwtPayload, passwordSecret: string): string => {
+export const signPasswordToken = (data: Partial<JwtPayload>, passwordSecret: string): string => {
   return jwt.sign(data, passwordSecret, {expiresIn: '1h'})
 }
 
