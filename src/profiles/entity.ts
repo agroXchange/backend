@@ -57,4 +57,7 @@ export class Profile extends BaseEntity {
   @OneToMany(_ => Order, order => order.buyer)
   orders: Order[]
 
+  @OneToMany(_ => Order, order => order.seller)
+  ord: Order[]
+
  }
