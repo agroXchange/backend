@@ -48,7 +48,7 @@ export default class orderController {
   ) {
     const seller = currentUser.profile
 
-    if (unseen) {
+    if (unseen === 'true') {
       const unseenOrders = await Order.find({where: {seller, seen: false}})
       const orderPromises = unseenOrders.map(o => {
         o.seen = true
