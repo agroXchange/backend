@@ -107,8 +107,10 @@ export default class UserController {
     @Param('id') id: number,
     @UploadedFile('logo', {options: FILE_UPLOAD_OPTIONS}) file: any
   ) {
-    if (!(currentUser.profile.id === id) || currentUser.role !== 'admin') throw new UnauthorizedError("You're not authorized to do this.")
-
+    if (currentUser.role !== 'admin') {
+      if (!(currentUser.profile.id === id)) throw new UnauthorizedError("You're not authorized to do this.")
+    }
+    
     const profile = await Profile.findOneById(id)
     if (!profile) throw new NotFoundError('No profile found.')
 
