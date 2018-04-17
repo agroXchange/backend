@@ -44,12 +44,12 @@ export default class ProductController {
 async searchProducts(
   @QueryParam("code") code: string,
   @QueryParam("country") country: string
-    //@Body() {country, code}
 )
 
 {
   console.log(code)
   console.log(country)
+
   if (country !== '*' && code !== '*'){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
@@ -61,17 +61,8 @@ async searchProducts(
     console.log("cc" + list)
     return list
   }
-  // if (country !== '*' && code !=='*'){
-  //   const list = await getRepository(Product)
-  //   .createQueryBuilder("product")
-  //     .innerJoinAndSelect("product.code", "code")
-  //   .where("code.code = :code", {code: code})
-  //     .innerJoinAndSelect("product.seller", "profile")
-  //   .getMany()
-  //   console.log("allcountry" + list  )
-  //   return list
-  // }
-  if (country === '*' && code !=='*') {
+
+  if (country === '*' && code !=='*' ) {
     const list = await getRepository(Product)
       .createQueryBuilder("product")
       .innerJoinAndSelect("product.code", "code")
@@ -81,6 +72,7 @@ async searchProducts(
     console.log("hascode" + list)
     return list
   }
+
   if (country !=='*' && code ==='*'){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
@@ -91,6 +83,7 @@ async searchProducts(
     console.log("specialcountry" + list)
     return list
   }
+
   if (country === '*' && code === '*') {
     return Product.find()
   }
