@@ -67,9 +67,7 @@ async searchProducts(
     .andWhere("code.code = :code", {code: code})
     .getMany()
     console.log("cc" + list)
-    return list.filter(product =>
-      (new Date(product.expiration) > new Date())
-      && product.volume > 0
+    return list
     )
   }
   if (!country){
@@ -80,10 +78,7 @@ async searchProducts(
       .innerJoinAndSelect("product.seller", "profile")
     .getMany()
     console.log("code" + list  )
-    return list.filter(product =>
-      (new Date(product.expiration) > new Date())
-      && product.volume > 0
-    )
+    return list
   }
   if (!code){
     const list = await getRepository(Product)
@@ -93,10 +88,7 @@ async searchProducts(
     .innerJoinAndSelect("product.code", "code")
     .getMany()
     console.log("country" + list)
-    return list.filter(product =>
-      (new Date(product.expiration) > new Date())
-      && product.volume > 0
-    )
+    return list
   }
 
   else {
