@@ -68,7 +68,7 @@ export default class orderController {
     return Promise.all(orderPromises)
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
   async getOrderbyID(
