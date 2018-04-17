@@ -70,14 +70,16 @@ export default class orderController {
     @CurrentUser() currentUser: User,
     @Body() order: Partial<Order>
   ) {
-    const buyer = currentUser.profile
+    const buyer = currentUser
     const product = await Product.findOneById(productId)
+    if (!product) throw new NotFoundError('No order found.')
     const newOrder=  await Order.create({
       volume: order.volume,
       comments: order.comments,
       date: new Date(),
       ICO: order.ICO,
       buyer: buyer,
+      seller: product.seller,
       product: product,
       }).save()
 
@@ -90,7 +92,7 @@ export default class orderController {
     @CurrentUser() currentUser: User,
     @Param('id') id: number,
   ) {
-    const usersOrders = await Order.find({where: {buyer : currentUser.profile}})
+    const usersOrders = await Order.find({where: {buyer : currentUser}})
     return usersOrders.map(async order => {
       if (order.id === id && order.status === 'Pending') {
         await order.remove()
@@ -115,16 +117,19 @@ export default class orderController {
   ) {
       const order = await Order.findOneById(orderId)
       if (!order) throw new NotFoundError('No order found.')
-      if(!(order!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
+      if(!(order!.status === ('Pending'|| 'Approved'))) throw new BadRequestError('You are not allow to do this.')
       await Order.merge(order!, updates).save()
       const updatedOrder = await Order.findOne({
         where: {orderId},
         relations: ['buyer']
       })
-      if (status="Approved") {
+      if (order.status==='Bought') {
         const product = await Product.findOneById(order.product.id)
-        product!.volume = product!.volume - order.volume
-          }
+        if (!product) throw new NotFoundError('No product found.')
+      product!.volume -= order.volume
+
+    product.save()
+
       return updatedOrder
-  }
-}
+    }
+}}
