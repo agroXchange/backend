@@ -10,8 +10,7 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam,
-  CurrentUser
+  CurrentUser, QueryParam
 
 } from 'routing-controllers'
 import { Order } from './entity'
@@ -42,10 +41,29 @@ export default class orderController {
   //@Authorized()
   @Get('/orders/received')
   async getSeller(
-    @CurrentUser() currentUser: User
+    @CurrentUser() currentUser: User,
+    @QueryParam('unseen') unseen: string
+
   ) {
     const seller = currentUser.profile
-    return Order.find({where: {seller}})
+
+    if (unseen === 'true') {
+      const unseenOrders = await Order.find({where: {seller, seen: false}})
+      const orderPromises = unseenOrders.map(o => {
+        o.seen = true
+        return o.save()
+      })
+
+      return Promise.all(orderPromises)
+    }
+
+    const orders = await Order.find({where: {seller}})
+    const orderPromises = orders.map(o => {
+      o.seen = true
+      return o.save()
+    })
+
+    return Promise.all(orderPromises)
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -117,7 +135,7 @@ export default class orderController {
   ) {
       const order = await Order.findOneById(orderId)
       if (!order) throw new NotFoundError('No order found.')
-      if(!(order!.status === ('Pending'|| 'Approved'))) throw new BadRequestError('You are not allow to do this.')
+      if(!(order!.status === 'Pending'|| 'Approved')) throw new BadRequestError('You are not allow to do this.')
       await Order.merge(order!, updates).save()
       const updatedOrder = await Order.findOne({
         where: {orderId},
