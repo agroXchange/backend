@@ -119,6 +119,28 @@ export default class UserController {
     return { message: 'Successfully added a profile picture.'}
   }
 
+  @Authorized()
+  @Patch('/profiles/:id')
+  async updateUserDetail(
+    @CurrentUser() currentUser: User,
+    @Param('id') id: number,
+    @Body() updates: Partial<Profile>
+  ) {
+    if(!(currentUser.id === id)) throw new BadRequestError('You are not authorized to use this route.')
+
+    const profile = await Profile.findOneById(id)
+    if (!profile) throw new NotFoundError(`User does not exist!`)
+    const changedUser = {
+        phone: updates.phone,
+        address: updates.address,
+        email: updates.email,
+        chamberOfCommerce: updates.chamberOfCommerce
+    }
+
+    const updateUser = await Profile.merge(profile, changedUser).save()
+    return updateUser
+  }
+
   @Post('/users')
   async createUser(
     @Body() body: ValidateSignupPayload
