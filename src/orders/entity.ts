@@ -31,6 +31,9 @@ export class Order extends BaseEntity {
   @Column('text', { nullable: true })
   ICO: string;
 
+  @Column('boolean', { default: false })
+  seen: boolean
+
   @ManyToOne(_ => Product, product => product.orders, {eager: true})
   product: Product;
 

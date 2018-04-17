@@ -10,8 +10,7 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam,
-  CurrentUser
+  CurrentUser, QueryParam
 
 } from 'routing-controllers'
 import { Order } from './entity'
@@ -36,9 +35,52 @@ export default class orderController {
   async getUser(
     @CurrentUser() currentUser: User
   ) {
-    const buyer = currentUser
+    const buyer = currentUser.profile
     return Order.find({where: {buyer}})
   }
+
+
+  //@Authorized()
+  @Get('/orders/received')
+  async getSeller(
+    @CurrentUser() currentUser: User,
+    @QueryParam('unseen') unseen: string
+
+  ) {
+    const seller = currentUser.profile
+
+    if (unseen === 'true') {
+      const unseenOrders = await Order.find({where: {seller, seen: false}})
+      const orderPromises = unseenOrders.map(o => {
+        o.seen = true
+        return o.save()
+      })
+
+      return Promise.all(orderPromises)
+    }
+
+    const orders = await Order.find({where: {seller}})
+    const orderPromises = orders.map(o => {
+      o.seen = true
+      return o.save()
+    })
+
+    return Promise.all(orderPromises)
+  }
+
+  //@Authorized() //TODO: activate once testing is over
+  @Get('/orders/:id([0-9]+)')
+  @HttpCode(200)
+  async getOrderbyID(
+    @Param('id') id: number
+  ) {
+    const order = await Order.findOne({
+      where: {id},
+      relations: ['buyer']
+    })
+    return order
+  }
+
 
   //@Authorized() //TODO: activate once testing is over
   @Post('/products/:id([0-9]+)/orders')
@@ -50,12 +92,14 @@ export default class orderController {
   ) {
     const buyer = currentUser.profile
     const product = await Product.findOneById(productId)
+    if (!product) throw new NotFoundError('No order found.')
     const newOrder=  await Order.create({
       volume: order.volume,
       comments: order.comments,
       date: new Date(),
       ICO: order.ICO,
       buyer: buyer,
+      seller: product.seller,
       product: product,
       }).save()
 
@@ -92,12 +136,21 @@ export default class orderController {
     @Body() updates: Partial<Order>
   ) {
       const order = await Order.findOneById(orderId)
-      if(!(order!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
+      if (!order) throw new NotFoundError('No order found.')
+      if(!(order!.status === 'Pending'|| 'Approved')) throw new BadRequestError('You are not allow to do this.')
       await Order.merge(order!, updates).save()
       const updatedOrder = await Order.findOne({
         where: {orderId},
         relations: ['buyer']
       })
+
+      if (order.status==='Bought') {
+        const product = await Product.findOneById(order.product.id)
+        if (!product) throw new NotFoundError('No product found.')
+      product!.volume -= order.volume
+
+    product.save()
+      }
       return updatedOrder
-  }
+    }
 }
