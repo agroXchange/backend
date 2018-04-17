@@ -10,7 +10,6 @@ import {
   Delete,
   HttpCode,
   Post,
-  HeaderParam,
   CurrentUser, QueryParam
 
 } from 'routing-controllers'
@@ -136,7 +135,7 @@ export default class orderController {
   ) {
       const order = await Order.findOneById(orderId)
       if (!order) throw new NotFoundError('No order found.')
-      if(!(order!.status === ('Pending'|| 'Approved'))) throw new BadRequestError('You are not allow to do this.')
+      if(!(order!.status === 'Pending'|| 'Approved')) throw new BadRequestError('You are not allow to do this.')
       await Order.merge(order!, updates).save()
       const updatedOrder = await Order.findOne({
         where: {orderId},
