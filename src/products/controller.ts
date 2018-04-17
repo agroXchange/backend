@@ -132,18 +132,19 @@ async seacrhProducts(
     return "Succesfully added new product"
   }
 
-@Authorized()
-@Patch('/products/:id([0-9]+)')
-async changeProduct(
-  @CurrentUser() currentUser: User,
-  @Param('id') id: number,
-  @Body() updates: Partial<Product>
-) {
-  const product = await Product.findOneById(id)
-  if(!product) throw new BadRequestError("Product doesn't exist.")
+  @Authorized()
+  @Patch('/products/:id([0-9]+)')
+  async changeProduct(
+    @CurrentUser() currentUser: User,
+    @Param('id') id: number,
+    @Body() updates: Partial<Product>
+  ) {
+    const product = await Product.findOneById(id)
+    if(!product) throw new BadRequestError("Product doesn't exist.")
 
-  if (!(product.seller.id === currentUser.id)) throw new
-  BadRequestError('You are not authorized to change this product.')
-  const changedProduct = await Product.merge(product, updates).save()
-  return changedProduct
-}}
+    if (!(product.seller.id === currentUser.id)) throw new
+    BadRequestError('You are not authorized to change this product.')
+    const changedProduct = await Product.merge(product, updates).save()
+    return changedProduct
+  }
+}
