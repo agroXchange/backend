@@ -35,7 +35,7 @@ export default class orderController {
   async getBuyer(
     @CurrentUser() currentUser: User
   ) {
-    const buyer = currentUser
+    const buyer = currentUser.profile
     return Order.find({where: {buyer}})
   }
 
@@ -44,7 +44,7 @@ export default class orderController {
   async getSeller(
     @CurrentUser() currentUser: User
   ) {
-    const seller = currentUser
+    const seller = currentUser.profile
     return Order.find({where: {seller}})
   }
 
@@ -70,7 +70,7 @@ export default class orderController {
     @CurrentUser() currentUser: User,
     @Body() order: Partial<Order>
   ) {
-    const buyer = currentUser
+    const buyer = currentUser.profile
     const product = await Product.findOneById(productId)
     if (!product) throw new NotFoundError('No order found.')
     const newOrder=  await Order.create({
@@ -92,7 +92,7 @@ export default class orderController {
     @CurrentUser() currentUser: User,
     @Param('id') id: number,
   ) {
-    const usersOrders = await Order.find({where: {buyer : currentUser}})
+    const usersOrders = await Order.find({where: {buyer : currentUser.profile}})
     return usersOrders.map(async order => {
       if (order.id === id && order.status === 'Pending') {
         await order.remove()
