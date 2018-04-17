@@ -3,19 +3,15 @@ import {
   JsonController,
   Param,
   BadRequestError,
-  NotFoundError,
   Get,
   Body,
-  Patch,
-  Delete,
   HttpCode,
   Post,
-  HeaderParam,
   UploadedFile,
   CurrentUser,
   QueryParam
 } from 'routing-controllers'
-import { Order } from '../orders/entity'
+
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
@@ -45,35 +41,49 @@ export default class ProductController {
 
 @Get('/search/products')
 @HttpCode(200)
-async seacrhProducts(
-    @Body() {country, code}
+async searchProducts(
+  @QueryParam("code") code: string,
+  @QueryParam("country") country: string
+    //@Body() {country, code}
 )
+
 {
+  console.log(code)
+  console.log(country)
   if (country && code){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.seller", "profile")
+      .innerJoinAndSelect("product.seller", "profile")
     .where("profile.country = :country", {country: country})
-    .innerJoin("product.code", "code")
+      .innerJoinAndSelect("product.code", "code")
     .andWhere("code.code = :code", {code: code})
     .getMany()
+    console.log("cc" + list)
     return list
   }
   if (!country){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.code", "code")
-    .andWhere("code.code = :code", {code: code})
+      .innerJoinAndSelect("product.code", "code")
+    .where("code.code = :code", {code: code})
+      .innerJoinAndSelect("product.seller", "profile")
     .getMany()
+    console.log("code" + list  )
     return list
   }
   if (!code){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.seller", "profile")
+      .innerJoinAndSelect("product.seller", "profile")
     .where("profile.country = :country", {country: country})
+    .innerJoinAndSelect("product.code", "code")
     .getMany()
+    console.log("country" + list)
     return list
+  }
+
+  else {
+    return Product.find()
   }
     }
 
