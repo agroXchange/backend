@@ -3,19 +3,16 @@ import {
   JsonController,
   Param,
   BadRequestError,
-  NotFoundError,
   Get,
   Body,
-  Patch,
-  Delete,
   HttpCode,
   Post,
-  HeaderParam,
   UploadedFile,
   CurrentUser,
-  QueryParam
+  QueryParam,
+  Patch
 } from 'routing-controllers'
-import { Order } from '../orders/entity'
+
 import { Code } from '../codes/entity'
 import { Product } from '../products/entity'
 import { Validate } from 'class-validator'
@@ -41,46 +38,69 @@ export default class ProductController {
       const products = await Product.find({
         where: {seller: profile}
       })
-      const date = new Date
-      console.log(date)
-      if(!(currentUser.id === profile.id)){
-      console.log(profile.id)
-      return products.filter(product => product.expiration > new Date()
-      )}
-      return products
-    }
+
+      if(!(currentUser.id === profile.id) && !(currentUser.role === 'admin')){
+          return products.filter(product =>
+            (new Date(product.expiration) > new Date())
+            && product.volume > 0
+          )}
+          return products
+        }
 
 @Get('/search/products')
 @HttpCode(200)
-async seacrhProducts(
-    @Body() {country, code}
+async searchProducts(
+  @QueryParam("code") code: string,
+  @QueryParam("country") country: string
+    //@Body() {country, code}
 )
+
 {
+  console.log(code)
+  console.log(country)
   if (country && code){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.seller", "profile")
+      .innerJoinAndSelect("product.seller", "profile")
     .where("profile.country = :country", {country: country})
-    .innerJoin("product.code", "code")
+      .innerJoinAndSelect("product.code", "code")
     .andWhere("code.code = :code", {code: code})
     .getMany()
-    return list
+    console.log("cc" + list)
+    return list.filter(product =>
+      (new Date(product.expiration) > new Date())
+      && product.volume > 0
+    )
   }
   if (!country){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.code", "code")
-    .andWhere("code.code = :code", {code: code})
+      .innerJoinAndSelect("product.code", "code")
+    .where("code.code = :code", {code: code})
+      .innerJoinAndSelect("product.seller", "profile")
     .getMany()
-    return list
+    console.log("code" + list  )
+    return list.filter(product =>
+      (new Date(product.expiration) > new Date())
+      && product.volume > 0
+    )
   }
   if (!code){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
-    .innerJoin("product.seller", "profile")
+      .innerJoinAndSelect("product.seller", "profile")
     .where("profile.country = :country", {country: country})
+    .innerJoinAndSelect("product.code", "code")
     .getMany()
-    return list
+    console.log("country" + list)
+    return list.filter(product =>
+      (new Date(product.expiration) > new Date())
+      && product.volume > 0
+    )
+  }
+
+  else {
+    return Product.find()
   }
     }
 
