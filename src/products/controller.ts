@@ -9,7 +9,7 @@ import {
   Post,
   UploadedFile,
   CurrentUser,
-  QueryParam
+  QueryParam, Patch
 } from 'routing-controllers'
 
 import { Code } from '../codes/entity'
