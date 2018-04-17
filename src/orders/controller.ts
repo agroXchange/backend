@@ -15,7 +15,6 @@ import {
 } from 'routing-controllers'
 import { Order } from './entity'
 import { User } from '../users/entity'
-import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
 
 @JsonController()
@@ -32,11 +31,20 @@ export default class orderController {
 
   //@Authorized()
   @Get('/orders')
-  async getUser(
+  async getBuyer(
     @CurrentUser() currentUser: User
   ) {
     const buyer = currentUser
     return Order.find({where: {buyer}})
+  }
+
+  //@Authorized()
+  @Get('/orders/received')
+  async getSeller(
+    @CurrentUser() currentUser: User
+  ) {
+    const seller = currentUser
+    return Order.find({where: {seller}})
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -51,6 +59,7 @@ export default class orderController {
     })
     return order
   }
+
 
   //@Authorized() //TODO: activate once testing is over
   @Post('/products/:id([0-9]+)/orders')
@@ -104,12 +113,17 @@ export default class orderController {
     @Body() updates: Partial<Order>
   ) {
       const order = await Order.findOneById(orderId)
+      if (!order) throw new NotFoundError('No order found.')
       if(!(order!.status === 'Pending')) throw new BadRequestError('You are not allow to do this.')
       await Order.merge(order!, updates).save()
       const updatedOrder = await Order.findOne({
         where: {orderId},
         relations: ['buyer']
       })
+      if (status="Approved") {
+        const product = await Product.findOneById(order.product.id)
+        product!.volume = product!.volume - order.volume
+          }
       return updatedOrder
   }
 }
