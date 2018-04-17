@@ -28,7 +28,7 @@ import {baseUrl} from "../constants";
 @JsonController()
 export default class ProductController {
 
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Get('/profiles/:id([0-9]+)/products')
   @HttpCode(200)
   async getProducts(
@@ -37,11 +37,18 @@ export default class ProductController {
   ) {
       const profile = await Profile.findOneById(id)
       if(!profile) throw new BadRequestError("no user")
-      return Product.find({
-      where: {seller: profile}
-    })
 
-}
+      const products = await Product.find({
+        where: {seller: profile}
+      })
+      const date = new Date
+      console.log(date)
+      if(!(currentUser.id === profile.id)){
+      console.log(profile.id)
+      return products.filter(product => product.expiration > new Date()
+      )}
+      return products
+    }
 
 @Get('/search/products')
 @HttpCode(200)
@@ -84,7 +91,7 @@ async seacrhProducts(
       return Product.find()
   }
 
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
 
@@ -96,7 +103,7 @@ async seacrhProducts(
     return product
   }
 
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Post('/products')
   @HttpCode(200)
   async addProduct(
@@ -139,4 +146,4 @@ async changeProduct(
   BadRequestError('You are not authorized to change this product.')
   const changedProduct = await Product.merge(product, updates).save()
   return changedProduct
-}
+}}
