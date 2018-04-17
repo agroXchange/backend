@@ -13,7 +13,7 @@ export class Order extends BaseEntity {
 
   @IsString()
   @Column('text', { nullable: true })
-  volume: string;
+  volume: number;
 
   @IsString()
   @Column('text', { nullable: true })
@@ -36,5 +36,8 @@ export class Order extends BaseEntity {
 
   @ManyToOne(_ => Profile, buyer => buyer.orders)
   buyer: Profile;
+
+  @ManyToOne(_ => Profile, seller => seller.ordersReceived)
+  seller: Profile;
 
  }
