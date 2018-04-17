@@ -127,9 +127,8 @@ export default class orderController {
         const product = await Product.findOneById(order.product.id)
         if (!product) throw new NotFoundError('No product found.')
       product!.volume -= order.volume
-
     product.save()
-
+}
       return updatedOrder
-    }
-}}
+  }
+}
