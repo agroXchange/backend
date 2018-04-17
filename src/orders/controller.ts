@@ -31,7 +31,7 @@ export default class orderController {
     })
   }
 
-  //@Authorized()
+  // @Authorized()
   @Get('/orders')
   async getUser(
     @CurrentUser() currentUser: User
@@ -40,18 +40,20 @@ export default class orderController {
     return Order.find({where: {buyer}})
   }
 
-  //@Authorized() //TODO: activate once testing is over
-  @Get('/orders/:id([0-9]+)')
+ @Authorized()
+  @Get('/admin/profiles/:id/orders')
   @HttpCode(200)
-  async getOrderbyID(
-    @Param('id') id: number
+  async getOrdersbyUserId(
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
   ) {
-    const order = await Order.findOne({
-      where: {id},
-      relations: ['buyer']
-    })
-    return order
-  }
+    if(!(currentUser.role === 'admin')) throw new BadRequestError('You are not authorized to use this route.')
+    const profile = await Profile.findOneById(id)
+    if(!profile) throw new BadRequestError("no user")
+    return Order.find({
+    where: {buyer: profile}
+  })
+}
 
   //@Authorized() //TODO: activate once testing is over
   @Post('/products/:id([0-9]+)/orders')
