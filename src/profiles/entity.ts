@@ -58,6 +58,6 @@ export class Profile extends BaseEntity {
   orders: Order[]
 
   @OneToMany(_ => Order, order => order.seller)
-  ord: Order[]
+  ordersReceived: Order[]
 
  }
