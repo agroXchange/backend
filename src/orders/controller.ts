@@ -15,6 +15,7 @@ import {
 } from 'routing-controllers'
 import { Order } from './entity'
 import { User } from '../users/entity'
+import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
 
 @JsonController()
@@ -29,14 +30,15 @@ export default class orderController {
     })
   }
 
-  //@Authorized()
+  // @Authorized()
   @Get('/orders')
-  async getBuyer(
+  async getUser(
     @CurrentUser() currentUser: User
   ) {
     const buyer = currentUser.profile
     return Order.find({where: {buyer}})
   }
+
 
   //@Authorized()
   @Get('/orders/received')
@@ -141,6 +143,7 @@ export default class orderController {
         where: {orderId},
         relations: ['buyer']
       })
+
       if (order.status==='Bought') {
         const product = await Product.findOneById(order.product.id)
         if (!product) throw new NotFoundError('No product found.')

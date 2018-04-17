@@ -91,7 +91,10 @@ async searchProducts(
   @HttpCode(200)
   getAllProducts(
   ) {
-      return Product.find()
+      return Product.find({
+        relations: ['orders', 'orders.buyer']
+
+      })
   }
 
   @Authorized() //TODO: activate once testing is over
