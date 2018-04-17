@@ -37,7 +37,7 @@ export class Order extends BaseEntity {
   @ManyToOne(_ => Profile, buyer => buyer.orders)
   buyer: Profile;
 
-  @ManyToOne(_ => Profile, seller => seller.orders)
+  @ManyToOne(_ => Profile, seller => seller.ordersReceived)
   seller: Profile;
 
  }
