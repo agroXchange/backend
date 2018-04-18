@@ -76,7 +76,7 @@ export default class MessageController {
 
     if (!(senderIsBuyer || senderIsSeller)) throw new UnauthorizedError("You're not authorized.")
 
-    return order.messages
+    return order
   }
 
 }
