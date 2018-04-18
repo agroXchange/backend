@@ -22,31 +22,24 @@ export default class currencyController {
 
 }
 
-//TODO: update the currencyrate
-// const currencys = ['USD', 'EUR', 'CRC', 'PAB', 'COP']
-// const currencys = ['USD', 'EUR']
-// const currencyList = currencys.map(a => {
-//   let values = currencys.map(b => {
-//     return `${a}_${b}`
-//   })
-//   return {[a] : values}
-// })
-// console.log(currencyList[0]['USD'])
-// const minutes = 0.1, updateInterval = minutes * 60 * 1000
-// let resulting = []
-//
-// setInterval(function() {
-//   console.log("Currencys updated at: " + new Date())
-//     for (let i = 0; i < currencys.length; i++) {
-//       currencyList[i][currencys[i]].map(convertion => {
-//         const url =`https://free.currencyconverterapi.com/api/v5/convert?q=${convertion}&compact=y`;
-//         request.get(url, (error, response, body) => {
-//           let json = JSON.parse(body)
-//           resulting[convertion] = json[convertion].val
-//         })
-//     })
-//     console.log(currencyList[i][currencys[i]], resulting)
-//     resulting = []
-//   }
-//
-// }, updateInterval)
+const minutes = 30, updateInterval = minutes * 60 * 1000
+setInterval(async function() {
+  const currencys = await Currency.find()
+  const list = ['USD', 'EUR', 'CRC', 'PAB', 'COP']
+  console.log("Currencys updated at: " + new Date())
+  currencys.map(currency => {
+    const url = `https://data.fixer.io/api/latest?access_key=79a8743353a65dd03ada5eb0c872d0bd&base=${currency.name}&symbols=USD,EUR,CRC,PAB,COP&format=1`
+    request(url, (error, response, body) => {
+      let json = JSON.parse(body)
+      currency.USD = json.rates.USD
+      currency.EUR = json.rates.ERU
+      currency.CRC = json.rates.CRC
+      currency.PAB = json.rates.PAB
+      currency.COP = json.rates.COP
+      currency.save()
+    })
+    currency.updated_at = new Date()
+    currency.save()
+  })
+  //update currency Data
+}, updateInterval)

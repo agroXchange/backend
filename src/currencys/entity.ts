@@ -10,23 +10,23 @@ export class Currency extends BaseEntity {
 
   @IsNumber()
   @Column('real', { nullable: true })
-  usd: number;
+  USD: number;
 
   @IsNumber()
   @Column('real', { nullable: true })
-  eur: number;
+  EUR: number;
 
   @IsNumber()
   @Column('real', { nullable: true })
-  crc: number;
+  CRC: number;
 
   @IsNumber()
   @Column('real', { nullable: true })
-  pab: number;
+  PAB: number;
 
   @IsNumber()
   @Column('real', { nullable: true })
-  cop: number;
+  COP: number;
 
   @IsString()
   @Column('text', { nullable: true })
