@@ -21,26 +21,35 @@ import { Product } from '../products/entity'
 @JsonController()
 export default class orderController {
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Get('/orders/all')
   @HttpCode(200)
   getOrders() {
     return Order.find({
-      relations: ['buyer']
+      relations: ['buyer'],
+      order : {
+        'date' : 'DESC',
+        'id'   : 'DESC'
+      }
     })
   }
 
-  // @Authorized()
+  @Authorized()
   @Get('/orders')
   async getUser(
     @CurrentUser() currentUser: User
   ) {
     const buyer = currentUser.profile
-    return Order.find({where: {buyer}})
+    return Order.find({
+      where: {buyer},
+      order: {
+        'date' : 'DESC',
+        'id'   : 'DESC'
+      }
+    })
   }
 
-
-  //@Authorized()
+  @Authorized()
   @Get('/orders/received')
   async getSeller(
     @CurrentUser() currentUser: User,
@@ -50,13 +59,27 @@ export default class orderController {
     const seller = currentUser.profile
 
     if (unseen === 'true') {
-      return Order.find({where: {seller, seen: false}, relations: ['buyer']})
+      return Order.find({
+        where: {seller, seen: false},
+        relations: ['buyer'],
+        order: {
+          'date' : 'DESC',
+          'id'   : 'DESC'
+        }
+      })
     }
 
-    return Order.find({where: {seller}, relations: ['buyer']})
+    return Order.find({
+      where: {seller},
+      relations: ['buyer'],
+      order: {
+        'date' : 'DESC',
+        'id'   : 'DESC'
+      }
+    })
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
   async getOrderbyID(
@@ -77,7 +100,7 @@ export default class orderController {
   }
 
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Post('/products/:id([0-9]+)/orders')
   @HttpCode(200)
   async addOrder(
@@ -101,7 +124,7 @@ export default class orderController {
     return newOrder
   }
 
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Delete('/orders/:id')
   async deleteOrder(
     @CurrentUser() currentUser: User,
@@ -123,7 +146,7 @@ export default class orderController {
     })
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Patch('/orders/:id([0-9]+)')
   @HttpCode(200)
   async changeOrder(
