@@ -7,6 +7,7 @@ import { Order } from './orders/entity'
 import { Product } from './products/entity'
 import { Profile } from './profiles/entity'
 import { User } from './users/entity'
+import { Currency } from './currencys/entity'
 
 class CustomNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
 
@@ -36,7 +37,8 @@ export default () =>
       Order,
       Product,
       Profile,
-      User
+      User,
+      Currency
     ],
     synchronize: true,
     logging: true,
