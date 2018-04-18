@@ -50,34 +50,29 @@ export default class orderController {
     const seller = currentUser.profile
 
     if (unseen === 'true') {
-      const unseenOrders = await Order.find({where: {seller, seen: false}})
-      const orderPromises = unseenOrders.map(o => {
-        o.seen = true
-        return o.save()
-      })
-
-      return Promise.all(orderPromises)
+      return Order.find({where: {seller, seen: false}, relations: ['buyer']})
     }
 
-    const orders = await Order.find({where: {seller}})
-    const orderPromises = orders.map(o => {
-      o.seen = true
-      return o.save()
-    })
-
-    return Promise.all(orderPromises)
+    return Order.find({where: {seller}, relations: ['buyer']})
   }
 
   //@Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
   async getOrderbyID(
-    @Param('id') id: number
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
   ) {
     const order = await Order.findOne({
       where: {id},
       relations: ['buyer']
     })
+    if(!order) throw new NotFoundError('No order found.')
+
+    if (currentUser.profile.id === order.seller.id && !order.seen) {
+      order.seen = true
+      await order.save()
+    }
     return order
   }
 
