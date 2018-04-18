@@ -10,11 +10,12 @@ import {
   Delete,
   HttpCode,
   Post,
-  CurrentUser
+  CurrentUser, QueryParam
 
 } from 'routing-controllers'
 import { Order } from './entity'
 import { User } from '../users/entity'
+import { Profile } from '../profiles/entity'
 import { Product } from '../products/entity'
 
 @JsonController()
@@ -29,22 +30,42 @@ export default class orderController {
     })
   }
 
-  //@Authorized()
+  // @Authorized()
   @Get('/orders')
-  async getBuyer(
+  async getUser(
     @CurrentUser() currentUser: User
   ) {
     const buyer = currentUser.profile
     return Order.find({where: {buyer}})
   }
 
+
   //@Authorized()
   @Get('/orders/received')
   async getSeller(
-    @CurrentUser() currentUser: User
+    @CurrentUser() currentUser: User,
+    @QueryParam('unseen') unseen: string
+
   ) {
     const seller = currentUser.profile
-    return Order.find({where: {seller}})
+
+    if (unseen === 'true') {
+      const unseenOrders = await Order.find({where: {seller, seen: false}})
+      const orderPromises = unseenOrders.map(o => {
+        o.seen = true
+        return o.save()
+      })
+
+      return Promise.all(orderPromises)
+    }
+
+    const orders = await Order.find({where: {seller}})
+    const orderPromises = orders.map(o => {
+      o.seen = true
+      return o.save()
+    })
+
+    return Promise.all(orderPromises)
   }
 
   //@Authorized() //TODO: activate once testing is over
@@ -116,8 +137,6 @@ export default class orderController {
   ) {
       const order = await Order.findOneById(orderId)
       if (!order) throw new NotFoundError('No order found.')
-
-
       if (order!.status === 'Pending' && updates.status === 'Approved' || updates.status === 'Declined')  {
       await Order.merge(order!, updates).save()
       var updatedOrder = await Order.findOne({
