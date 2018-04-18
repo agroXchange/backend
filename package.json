@@ -22,6 +22,8 @@
     "pg": "^7.4.1",
     "request": "^2.85.0",
     "routing-controllers": "^0.7.7",
+    "socket.io": "^2.1.0",
+    "socketio-jwt-auth": "^0.0.6",
     "typeorm": "^0.1.16",
     "typeorm-routing-controllers-extensions": "^0.1.0"
   },
