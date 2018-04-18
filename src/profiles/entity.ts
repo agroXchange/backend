@@ -3,6 +3,7 @@ import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsEmail } from 'class-validator'
 import {Order} from "../orders/entity"
 import {Product} from "../products/entity"
+import Message from "../messages/entity";
 
 @Entity()
 export class Profile extends BaseEntity {
@@ -59,5 +60,11 @@ export class Profile extends BaseEntity {
 
   @OneToMany(_ => Order, order => order.seller)
   ordersReceived: Order[]
+
+  @OneToMany(_ => Message, message => message.sender)
+  sentMessages: Message[]
+
+  @OneToMany(_ => Message, message => message.receiver)
+  receivedMessages: Message[]
 
  }

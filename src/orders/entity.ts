@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, RelationId } from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, RelationId, OneToMany} from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, IsNumber} from 'class-validator'
 import { Product } from '../products/entity'
 import {Profile} from "../profiles/entity";
+import Message from "../messages/entity";
 
 
 @Entity()
@@ -42,5 +43,8 @@ export class Order extends BaseEntity {
 
   @ManyToOne(_ => Profile, seller => seller.ordersReceived, {eager: true})
   seller: Profile;
+
+  @OneToMany(_ => Message, message => message.order)
+  messages: Message[]
 
  }
