@@ -8,6 +8,7 @@ import { Product } from './products/entity'
 import { Profile } from './profiles/entity'
 import { User } from './users/entity'
 import { Currency } from './currencys/entity'
+import Message from "./messages/entity";
 
 class CustomNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
 
@@ -38,7 +39,8 @@ export default () =>
       Product,
       Profile,
       User,
-      Currency
+      Currency,
+      Message
     ],
     synchronize: true,
     logging: true,

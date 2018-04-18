@@ -10,6 +10,7 @@ import CodeController from "./codes/controller";
 import ProductController from "./products/controller";
 import CurrencyController from "./currencys/controller";
 import * as serve from 'koa-static'
+import MessageController from "./messages/controller";
 
 const port = process.env.PORT || 4008
 
@@ -21,7 +22,8 @@ const app = createKoaServer({
     UserController,
     CodeController,
     ProductController,
-    CurrencyController
+    CurrencyController,
+    MessageController
   ],
   currentUserChecker: async (action: Action) => {
     const header: string = action.request.headers.authorization
