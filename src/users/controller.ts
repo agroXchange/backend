@@ -110,7 +110,7 @@ export default class UserController {
     if (currentUser.role !== 'admin') {
       if (!(currentUser.profile.id === id)) throw new UnauthorizedError("You're not authorized to do this.")
     }
-    
+
     const profile = await Profile.findOneById(id)
     if (!profile) throw new NotFoundError('No profile found.')
 

@@ -40,7 +40,7 @@ export default class orderController {
   }
 
 
-  //@Authorized()
+  @Authorized()
   @Get('/orders/received')
   async getSeller(
     @CurrentUser() currentUser: User,
@@ -56,7 +56,7 @@ export default class orderController {
     return Order.find({where: {seller}, relations: ['buyer']})
   }
 
-  //@Authorized() //TODO: activate once testing is over
+  @Authorized() //TODO: activate once testing is over
   @Get('/orders/:id([0-9]+)')
   @HttpCode(200)
   async getOrderbyID(
@@ -68,6 +68,7 @@ export default class orderController {
       relations: ['buyer']
     })
     if(!order) throw new NotFoundError('No order found.')
+    if (currentUser.role === 'admin') return order
 
     if (currentUser.profile.id === order.seller.id && !order.seen) {
       order.seen = true
