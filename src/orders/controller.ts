@@ -91,6 +91,7 @@ export default class orderController {
       relations: ['buyer']
     })
     if(!order) throw new NotFoundError('No order found.')
+    if (currentUser.role === 'admin') return order
 
     if (currentUser.profile.id === order.seller.id && !order.seen) {
       order.seen = true
