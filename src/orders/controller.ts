@@ -144,7 +144,7 @@ export default class orderController {
         relations: ['buyer']
       })}
 
-      else if (order!.status === 'Approved' && updates.status==='Bought') {
+      else if (order!.status === 'Approved' && updates.status==='Purchased') {
         await Order.merge(order!, updates).save()
         var updatedOrder = await Order.findOne({
           where: {orderId},
