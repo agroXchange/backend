@@ -129,7 +129,7 @@ async searchProducts(
 
     if(!currentUser.profile) throw new BadRequestError("Profile doesn't exist.")
 
-    const test = await Product.create({
+    const newproduct = await Product.create({
       photo: baseUrl + file.path.substring(6, file.path.length),
       volume: product.volume,
       price: product.price,
@@ -141,7 +141,7 @@ async searchProducts(
       seller: currentUser.profile,
       code: code
     }).save()
-    return "Succesfully added new product"
+    return newproduct
   }
 
   @Authorized()
