@@ -21,23 +21,46 @@ import {FILE_UPLOAD_OPTIONS} from '../uploadConfig'
 import { getConnection, getRepository } from 'typeorm'
 import {baseUrl} from "../constants";
 
+const validProducts = (array) => {
+  return array.filter(product =>
+    (new Date(product.expiration) > new Date())
+    && product.volume > 0
+  )
+}
+
 @JsonController()
 export default class ProductController {
 
-  @Authorized() //TODO: activate once testing is over
-  @Get('/profiles/:id([0-9]+)/products')
+  @Authorized()
+  @Get('/products')
   @HttpCode(200)
-  async getProducts(
-    @Param('id') id: number,
-    @CurrentUser() currentUser: User
+  async getAllProducts(
   ) {
-      const profile = await Profile.findOneById(id)
-      if(!profile) throw new BadRequestError("no user")
-      return Product.find({
-      where: {seller: profile}
-    })
+      const list = await Product.find({
+        relations: ['orders', 'orders.buyer']
+      })
+      return validProducts(list)
+  }
 
-}
+  @Authorized()
+ @Get('/profiles/:id([0-9]+)/products')
+ @HttpCode(200)
+ async getProducts(
+   @Param('id') id: number,
+   @CurrentUser() currentUser: User
+ ) {
+     const profile = await Profile.findOneById(id)
+     if(!profile) throw new BadRequestError("no user")
+
+     const products = await Product.find({
+       where: {seller: profile}
+     })
+
+     if(!(currentUser.id === profile.id) && !(currentUser.role === 'admin')){
+         return validProducts(products)
+       }
+       return products
+     }
 
 @Get('/search/products')
 @HttpCode(200)
@@ -47,9 +70,6 @@ async searchProducts(
 )
 
 {
-  console.log(code)
-  console.log(country)
-
   if (country !== '*' && code !== '*'){
     const list = await getRepository(Product)
     .createQueryBuilder("product")
@@ -58,8 +78,7 @@ async searchProducts(
       .innerJoinAndSelect("product.code", "code")
     .andWhere("code.code = :code", {code: code})
     .getMany()
-    console.log("cc" + list)
-    return list
+    return validProducts(list)
   }
 
   if (country === '*' && code !=='*' ) {
@@ -69,8 +88,7 @@ async searchProducts(
       .where("code.code = :code", { code: code })
       .innerJoinAndSelect("product.seller", "profile")
       .getMany()
-    console.log("hascode" + list)
-    return list
+    return validProducts(list)
   }
 
   if (country !=='*' && code ==='*'){
@@ -80,42 +98,32 @@ async searchProducts(
     .where("profile.country = :country", {country: country})
     .innerJoinAndSelect("product.code", "code")
     .getMany()
-    console.log("specialcountry" + list)
-    return list
+    return validProducts(list)
   }
 
   if (country === '*' && code === '*') {
-    return Product.find()
+    const list = await Product.find()
+    return validProducts(list)
   }
 
   else {
-    return Product.find()
+    const list = await Product.find()
+    return validProducts(list)
   }
     }
 
-  @Get('/products')
-  @HttpCode(200)
-  getAllProducts(
-  ) {
-      return Product.find({
-        relations: ['orders', 'orders.buyer']
 
-      })
-  }
-
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Get('/products/:id([0-9]+)')
   @HttpCode(200)
 
   getProductID(
-    @CurrentUser() currentUser: User,
     @Param('id') id: number
   ) {
-    const product = Product.findOneById(id)
-    return product
+    return Product.findOneById(id)
   }
 
-  @Authorized() //TODO: activate once testing is over
+  @Authorized()
   @Post('/products')
   @HttpCode(200)
   async addProduct(
