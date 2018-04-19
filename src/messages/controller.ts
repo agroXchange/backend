@@ -1,5 +1,6 @@
 import {
-  Body, CurrentUser, Get, JsonController, NotFoundError, Param, Post,
+  Authorized,
+  Body, CurrentUser, Get, JsonController, NotFoundError, Param, Patch, Post,
   UnauthorizedError
 } from "routing-controllers";
 import {User} from "../users/entity";
@@ -16,6 +17,7 @@ class ValidateMessage {
 @JsonController()
 export default class MessageController {
 
+  @Authorized()
   @Post('/orders/:id([0-9]+)/messages')
   async postMessage(
     @Body() body: ValidateMessage,
@@ -61,6 +63,41 @@ export default class MessageController {
     return message
   }
 
+  @Authorized()
+  @Get('/messages/unread')
+  async getUnreadMessages(
+    @CurrentUser() currentUser: User
+  ) {
+    const unreadMsgs = await Message.find({
+      where: {
+        receiver: currentUser.profile,
+        seen: false
+      },
+      relations: ['order']
+    })
+
+    const orderIdsUnreadMsgs =  unreadMsgs
+      .map(m => m.order.id)
+
+    return orderIdsUnreadMsgs
+      .filter((id, i) => orderIdsUnreadMsgs.indexOf(id) === i)
+  }
+
+  @Authorized()
+  @Patch('/messages/:id([0-9]+)')
+  async markMessage(
+    @Param('id') id: number,
+    @CurrentUser() currentUser: User
+  ) {
+    const msg = await Message.findOne({where:{id}, relations:['receiver']})
+    if (!msg) throw new NotFoundError('No msg found.')
+    if (currentUser.profile.id === msg.receiver.id) {
+      msg.seen = true
+      return msg.save()
+    }
+  }
+
+  @Authorized()
   @Get('/orders/:id([0-9]+)/messages')
   async getMessages(
     @CurrentUser() currentUser: User,
@@ -72,16 +109,25 @@ export default class MessageController {
     })
     if (!order) throw new NotFoundError('No order found')
 
-    const {seller, buyer} = order
+    const {seller, buyer, messages} = order
 
     const senderIsBuyer = currentUser.profile.id === buyer.id
     const senderIsSeller = currentUser.profile.id === seller.id
+
+    if (!(senderIsBuyer || senderIsSeller)) throw new UnauthorizedError("You're not authorized.")
 
     order.messages.sort((a, b) => {
       return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt))
     })
 
-    if (!(senderIsBuyer || senderIsSeller)) throw new UnauthorizedError("You're not authorized.")
+    const seenMessages = messages
+      .filter(m => !m.seen && currentUser.profile.id === m.receiver.id)
+      .map(m => {
+        m.seen = true
+        return m.save()
+      })
+
+    await Promise.all(seenMessages)
 
     return order
   }
