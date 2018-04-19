@@ -24,10 +24,21 @@ export default class dashboardController {
         })
         const users = await User.find()
         const products = await Product.find()
+        const orders = await Order.find()
+        const aprovedOrders = orders.filter(order => order.status === 'Approved')
+        const penddingOrders = orders.filter(order => order.status === 'Pending')
+        const declinedOrders = orders.filter(order => order.status === 'Declined')
+        const purchasedOrders = orders.filter(order => order.status === 'Purchased')
+
         return {
           pendingUsers: pendingUsers.length,
           users: users.length,
-          products: products.length
+          products: products.length,
+          orders: orders.length,
+          approvedOrders: aprovedOrders.length,
+          declinedOders: declinedOrders.length,
+          pendingOders: penddingOrders.length,
+          purchasedOders: purchasedOrders.length
         }
       }
 
