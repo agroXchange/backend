@@ -25,7 +25,7 @@ export class Order extends BaseEntity {
   status: string;
 
   @IsString()
-  @Column('timestamp', { nullable: true, default: () => "CURRENT_TIMESTAMP" })
+  @Column('date', { nullable: true })
   date: Date;
 
   @IsString()

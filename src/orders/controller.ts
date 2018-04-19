@@ -91,6 +91,7 @@ export default class orderController {
       relations: ['buyer']
     })
     if(!order) throw new NotFoundError('No order found.')
+    if (currentUser.role === 'admin') return order
 
     if (currentUser.profile.id === order.seller.id && !order.seen) {
       order.seen = true
@@ -162,7 +163,7 @@ export default class orderController {
         relations: ['buyer']
       })}
 
-      else if (order!.status === 'Approved' && updates.status==='Bought') {
+      else if (order!.status === 'Approved' && updates.status==='Purchased') {
         await Order.merge(order!, updates).save()
         var updatedOrder = await Order.findOne({
           where: {orderId},
