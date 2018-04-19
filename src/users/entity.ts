@@ -31,10 +31,10 @@ export class User extends BaseEntity {
   @JoinColumn()
   profile: Profile;
 
-  @Column('timestamp', {default: new Date()})
+  @Column('timestamp', {default: () => "CURRENT_TIMESTAMP"})
   createdAt: Date
 
-  @Column('timestamp', {default: new Date()})
+  @Column('timestamp', {default: () => "CURRENT_TIMESTAMP"})
   updatedAt: Date
 
   async setPassword(pass: string) {
