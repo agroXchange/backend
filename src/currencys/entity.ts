@@ -37,6 +37,6 @@ export class Currency extends BaseEntity {
   name: string;
 
   @IsString()
-  @Column('date', { nullable: true })
+  @Column('timestamp', { nullable: true, default: () => "CURRENT_TIMESTAMP" })
   updated_at: Date;
  }

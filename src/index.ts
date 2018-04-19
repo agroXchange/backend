@@ -1,18 +1,19 @@
 import 'reflect-metadata'
 import {Action, BadRequestError, useKoaServer} from "routing-controllers"
 import setupDb from './db'
-import {secret, verify} from "./jwt";
+import {secret, verify} from "./jwt"
 import * as IO from 'socket.io'
 import * as socketIoJwtAuth from 'socketio-jwt-auth'
 import * as Koa from 'koa'
 import {Server} from 'http'
 import {User} from "./users/entity";
-import LoginController from "./logins/controller";
+import LoginController from "./logins/controller"
 import  OrderController  from './orders/controller'
-import UserController from "./users/controller";
-import CodeController from "./codes/controller";
-import ProductController from "./products/controller";
-import CurrencyController from "./currencys/controller";
+import UserController from "./users/controller"
+import CodeController from "./codes/controller"
+import ProductController from "./products/controller"
+import CurrencyController from "./currencys/controller"
+import DashboardController from "./dashboard/controller"
 import * as serve from 'koa-static'
 import MessageController from "./messages/controller";
 
@@ -33,7 +34,8 @@ useKoaServer(app, {
     CodeController,
     ProductController,
     CurrencyController,
-    MessageController
+    MessageController,
+    DashboardController
   ],
   currentUserChecker: async (action: Action) => {
     const header: string = action.request.headers.authorization
