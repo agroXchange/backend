@@ -12,13 +12,12 @@ import { Product } from '../products/entity'
 @JsonController()
 export default class dashboardController {
 
-  // @Authorized()
+  @Authorized()
   @Get('/dashboard')
   @HttpCode(200)
   async getDashboard(
-    // @CurrentUser() currentUser: User
+    @CurrentUser() currentUser: User
   ) {
-    const currentUser = await User.findOneById(4)
       if (currentUser!.role === 'admin') {
         const pendingUsers = await User.find({
           where: {approved: false}
