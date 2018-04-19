@@ -174,6 +174,6 @@ export default class orderController {
       product!.volume -= order.volume
     product.save()}
 
-      return updatedOrder
+      return updates
   }
 }
