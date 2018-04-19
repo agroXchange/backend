@@ -16,6 +16,9 @@ export default class Message extends BaseEntity {
   @Column('boolean', {default: false})
   seen: boolean
 
+  @Column('timestamp', {default: () => "CURRENT_TIMESTAMP"})
+  createdAt: Date
+
   @ManyToOne(_ => Order, order => order.messages)
   order: Order
 

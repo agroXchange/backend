@@ -66,13 +66,20 @@ export default class MessageController {
     @CurrentUser() currentUser: User,
     @Param('id') id: number
   ) {
-    const order = await Order.findOne({where: {id}, relations: ['buyer', 'messages', 'messages.sender', 'messages.receiver']})
+    const order = await Order.findOne({
+      where: {id},
+      relations: ['buyer', 'messages', 'messages.sender', 'messages.receiver'],
+    })
     if (!order) throw new NotFoundError('No order found')
 
     const {seller, buyer} = order
 
     const senderIsBuyer = currentUser.profile.id === buyer.id
     const senderIsSeller = currentUser.profile.id === seller.id
+
+    order.messages.sort((a, b) => {
+      return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt))
+    })
 
     if (!(senderIsBuyer || senderIsSeller)) throw new UnauthorizedError("You're not authorized.")
 
