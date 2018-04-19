@@ -149,7 +149,7 @@ async searchProducts(
       seller: currentUser.profile,
       code: code
     }).save()
-    return "Succesfully added new product"
+    return test
   }
 
   @Authorized()
