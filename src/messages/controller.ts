@@ -111,23 +111,26 @@ export default class MessageController {
 
     const {seller, buyer, messages} = order
 
-    const senderIsBuyer = currentUser.profile.id === buyer.id
-    const senderIsSeller = currentUser.profile.id === seller.id
+    const userIsBuyer = currentUser.profile.id === buyer.id
+    const userIsSeller = currentUser.profile.id === seller.id
+    const userIsAdmin = currentUser.role === 'admin'
 
-    if (!(senderIsBuyer || senderIsSeller)) throw new UnauthorizedError("You're not authorized.")
+    if (!(userIsBuyer || userIsSeller || userIsAdmin )) throw new UnauthorizedError("You're not authorized.")
 
     order.messages.sort((a, b) => {
       return Number(new Date(a.createdAt)) - Number(new Date(b.createdAt))
     })
 
-    const seenMessages = messages
-      .filter(m => !m.seen && currentUser.profile.id === m.receiver.id)
-      .map(m => {
-        m.seen = true
-        return m.save()
-      })
+    if (!userIsAdmin) {
+      const seenMessages = messages
+        .filter(m => !m.seen && currentUser.profile.id === m.receiver.id)
+        .map(m => {
+          m.seen = true
+          return m.save()
+        })
 
-    await Promise.all(seenMessages)
+      await Promise.all(seenMessages)
+    }
 
     return order
   }
